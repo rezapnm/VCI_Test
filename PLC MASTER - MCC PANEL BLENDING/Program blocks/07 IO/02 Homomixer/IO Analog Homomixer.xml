@@ -1,0 +1,861 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Document>
+  <Engineering version="V17" />
+  <DocumentInfo>
+    <Created>2023-02-13T11:16:14.2211632Z</Created>
+    <ExportSetting>WithDefaults</ExportSetting>
+    <InstalledProducts>
+      <Product>
+        <DisplayName>Totally Integrated Automation Portal</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </Product>
+      <OptionPackage>
+        <DisplayName>TIA Portal Openness</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </OptionPackage>
+      <OptionPackage>
+        <DisplayName>TIA Portal Teamcenter Gateway</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </OptionPackage>
+      <OptionPackage>
+        <DisplayName>TIA Portal Version Control Interface</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </OptionPackage>
+      <Product>
+        <DisplayName>SINAMICS Startdrive Advanced</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </Product>
+      <OptionPackage>
+        <DisplayName>SINAMICS Startdrive G130, G150, S120, S150, SINAMICS MV, S210</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </OptionPackage>
+      <OptionPackage>
+        <DisplayName>SINAMICS Startdrive G110M, G120, G120C, G120D, G120P, G115D</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </OptionPackage>
+      <Product>
+        <DisplayName>STEP 7 Professional</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </Product>
+      <OptionPackage>
+        <DisplayName>STEP 7 Safety</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </OptionPackage>
+      <Product>
+        <DisplayName>WinCC Professional</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </Product>
+    </InstalledProducts>
+  </DocumentInfo>
+  <SW.Blocks.FB ID="0">
+    <AttributeList>
+      <AutoNumber>true</AutoNumber>
+      <HeaderAuthor />
+      <HeaderFamily />
+      <HeaderName />
+      <HeaderVersion>0.1</HeaderVersion>
+      <Interface><Sections xmlns="http://www.siemens.com/automation/Openness/SW/Interface/v5">
+  <Section Name="Input">
+    <Member Name="Init" Datatype="Bool" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute></AttributeList></Member>
+    <Member Name="Reset" Datatype="Bool" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute></AttributeList></Member>
+  </Section>
+  <Section Name="Output" />
+  <Section Name="InOut" />
+  <Section Name="Static">
+    <Member Name="FT-12.01" Datatype="&quot;Ana_w_K1K2&quot;" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Sections><Section Name="Input"><Member Name="LOCK" Datatype="Bool" /><Member Name="ERR_EXTERN" Datatype="Bool" /><Member Name="LIOP_SEL" Datatype="Bool" /><Member Name="L_SIM" Datatype="Bool" /><Member Name="L_RESET" Datatype="Bool" /><Member Name="IN_MODE" Datatype="Bool" /><Member Name="BIPOLAR" Datatype="Bool" /><Member Name="IN_INT" Datatype="Int" /><Member Name="IN" Datatype="Real" /><Member Name="IN_SIM" Datatype="Real" /><Member Name="HI_LIM" Datatype="Real" /><Member Name="LO_LIM" Datatype="Real" /><Member Name="K1_UNI" Datatype="Real" /><Member Name="K2_UNI" Datatype="Real" /><Member Name="LIM_ULA_Enable" Datatype="Bool" /><Member Name="LIM_ULA" Datatype="Real" /><Member Name="LIM_ULW_Enable" Datatype="Bool" /><Member Name="LIM_ULW" Datatype="Real" /><Member Name="LIM_LLW_Enable" Datatype="Bool" /><Member Name="LIM_LLW" Datatype="Real" /><Member Name="LIM_LLA_Enable" Datatype="Bool" /><Member Name="LIM_LLA" Datatype="Real" /><Member Name="LIM_HYS_Set" Datatype="Bool" /><Member Name="LIM_HYS" Datatype="Real" /><Member Name="INSTANCE" Datatype="String" /><Member Name="RESTART" Datatype="Bool" /></Section><Section Name="Output"><Member Name="QdwState" Datatype="DWord" /><Member Name="QOUT" Datatype="Real" /><Member Name="QHI_LIM" Datatype="Real" /><Member Name="QLO_LIM" Datatype="Real" /><Member Name="QLIM_ULA_Enable" Datatype="Bool" /><Member Name="QLIM_ULA" Datatype="Real" /><Member Name="QLIM_ULW_Enable" Datatype="Bool" /><Member Name="QLIM_ULW" Datatype="Real" /><Member Name="QLIM_LLW_Enable" Datatype="Bool" /><Member Name="QLIM_LLW" Datatype="Real" /><Member Name="QLIM_LLA_Enable" Datatype="Bool" /><Member Name="QLIM_LLA" Datatype="Real" /><Member Name="QLIM_HYS" Datatype="Real" /><Member Name="QALARM_UL" Datatype="Bool" /><Member Name="QWARN_UL" Datatype="Bool" /><Member Name="QWARN_LL" Datatype="Bool" /><Member Name="QALARM_LL" Datatype="Bool" /><Member Name="QSIM" Datatype="Bool" /><Member Name="QLOCK" Datatype="Bool" /><Member Name="QERR" Datatype="Bool" /><Member Name="QERR_EXT" Datatype="Bool" /><Member Name="QERR_OVERRUN" Datatype="Bool" /><Member Name="QERR_HIGHRANGE" Datatype="Bool" /><Member Name="QERR_LOWRANGE" Datatype="Bool" /><Member Name="QERR_WIRE" Datatype="Bool" /><Member Name="QwAlarm" Datatype="Word" /></Section><Section Name="InOut"><Member Name="VISIBILITY" Datatype="Byte" /><Member Name="OPdwCmd" Datatype="DWord" /></Section><Section Name="Static"><Member Name="OP_RESET" Datatype="Bool" /><Member Name="QLIM_HYS_Set" Datatype="Bool" /><Member Name="QIN_MODE" Datatype="Bool" /><Member Name="OP_LIM_ULA" Datatype="Real" /><Member Name="OP_LIM_ULW" Datatype="Real" /><Member Name="OP_LIM_LLW" Datatype="Real" /><Member Name="OP_LIM_LLA" Datatype="Real" /><Member Name="OP_SIM_Value" Datatype="Real" /><Member Name="OP_LIM_HYS_Perc" Datatype="Real" /><Member Name="OP_LIM_HYS_Abs" Datatype="Real" /><Member Name="OP_HI_LIM" Datatype="Real" /><Member Name="OP_LO_LIM" Datatype="Real" /><Member Name="OP_VISIBILITY" Datatype="Byte" /><Member Name="VISIBILITY_OLD" Datatype="Byte" /><Member Name="SEF_L_RESET_Link" Datatype="Bool" /><Member Name="Condition_SEF_L_RESET_Link" Datatype="Bool" /><Member Name="SEF_L_RESET_OP" Datatype="Bool" /><Member Name="Condition_Enable_ULA" Datatype="Bool" /><Member Name="Condition_Enable_ULW" Datatype="Bool" /><Member Name="Condition_Enable_LLW" Datatype="Bool" /><Member Name="Condition_Enable_LLA" Datatype="Bool" /></Section></Sections></Member>
+    <Member Name="FT-12.02" Datatype="&quot;Ana_w_K1K2&quot;" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">true</BooleanAttribute></AttributeList><Sections><Section Name="Input"><Member Name="LOCK" Datatype="Bool" /><Member Name="ERR_EXTERN" Datatype="Bool" /><Member Name="LIOP_SEL" Datatype="Bool" /><Member Name="L_SIM" Datatype="Bool" /><Member Name="L_RESET" Datatype="Bool" /><Member Name="IN_MODE" Datatype="Bool" /><Member Name="BIPOLAR" Datatype="Bool" /><Member Name="IN_INT" Datatype="Int" /><Member Name="IN" Datatype="Real" /><Member Name="IN_SIM" Datatype="Real" /><Member Name="HI_LIM" Datatype="Real" /><Member Name="LO_LIM" Datatype="Real" /><Member Name="K1_UNI" Datatype="Real" /><Member Name="K2_UNI" Datatype="Real" /><Member Name="LIM_ULA_Enable" Datatype="Bool" /><Member Name="LIM_ULA" Datatype="Real" /><Member Name="LIM_ULW_Enable" Datatype="Bool" /><Member Name="LIM_ULW" Datatype="Real" /><Member Name="LIM_LLW_Enable" Datatype="Bool" /><Member Name="LIM_LLW" Datatype="Real" /><Member Name="LIM_LLA_Enable" Datatype="Bool" /><Member Name="LIM_LLA" Datatype="Real" /><Member Name="LIM_HYS_Set" Datatype="Bool" /><Member Name="LIM_HYS" Datatype="Real" /><Member Name="INSTANCE" Datatype="String" /><Member Name="RESTART" Datatype="Bool" /></Section><Section Name="Output"><Member Name="QdwState" Datatype="DWord" /><Member Name="QOUT" Datatype="Real" /><Member Name="QHI_LIM" Datatype="Real" /><Member Name="QLO_LIM" Datatype="Real" /><Member Name="QLIM_ULA_Enable" Datatype="Bool" /><Member Name="QLIM_ULA" Datatype="Real" /><Member Name="QLIM_ULW_Enable" Datatype="Bool" /><Member Name="QLIM_ULW" Datatype="Real" /><Member Name="QLIM_LLW_Enable" Datatype="Bool" /><Member Name="QLIM_LLW" Datatype="Real" /><Member Name="QLIM_LLA_Enable" Datatype="Bool" /><Member Name="QLIM_LLA" Datatype="Real" /><Member Name="QLIM_HYS" Datatype="Real" /><Member Name="QALARM_UL" Datatype="Bool" /><Member Name="QWARN_UL" Datatype="Bool" /><Member Name="QWARN_LL" Datatype="Bool" /><Member Name="QALARM_LL" Datatype="Bool" /><Member Name="QSIM" Datatype="Bool" /><Member Name="QLOCK" Datatype="Bool" /><Member Name="QERR" Datatype="Bool" /><Member Name="QERR_EXT" Datatype="Bool" /><Member Name="QERR_OVERRUN" Datatype="Bool" /><Member Name="QERR_HIGHRANGE" Datatype="Bool" /><Member Name="QERR_LOWRANGE" Datatype="Bool" /><Member Name="QERR_WIRE" Datatype="Bool" /><Member Name="QwAlarm" Datatype="Word" /></Section><Section Name="InOut"><Member Name="VISIBILITY" Datatype="Byte" /><Member Name="OPdwCmd" Datatype="DWord" /></Section><Section Name="Static"><Member Name="OP_RESET" Datatype="Bool" /><Member Name="QLIM_HYS_Set" Datatype="Bool" /><Member Name="QIN_MODE" Datatype="Bool" /><Member Name="OP_LIM_ULA" Datatype="Real" /><Member Name="OP_LIM_ULW" Datatype="Real" /><Member Name="OP_LIM_LLW" Datatype="Real" /><Member Name="OP_LIM_LLA" Datatype="Real" /><Member Name="OP_SIM_Value" Datatype="Real" /><Member Name="OP_LIM_HYS_Perc" Datatype="Real" /><Member Name="OP_LIM_HYS_Abs" Datatype="Real" /><Member Name="OP_HI_LIM" Datatype="Real" /><Member Name="OP_LO_LIM" Datatype="Real" /><Member Name="OP_VISIBILITY" Datatype="Byte" /><Member Name="VISIBILITY_OLD" Datatype="Byte" /><Member Name="SEF_L_RESET_Link" Datatype="Bool" /><Member Name="Condition_SEF_L_RESET_Link" Datatype="Bool" /><Member Name="SEF_L_RESET_OP" Datatype="Bool" /><Member Name="Condition_Enable_ULA" Datatype="Bool" /><Member Name="Condition_Enable_ULW" Datatype="Bool" /><Member Name="Condition_Enable_LLW" Datatype="Bool" /><Member Name="Condition_Enable_LLA" Datatype="Bool" /></Section></Sections></Member>
+  </Section>
+  <Section Name="Temp" />
+  <Section Name="Constant" />
+</Sections></Interface>
+      <IsIECCheckEnabled>false</IsIECCheckEnabled>
+      <MemoryLayout>Standard</MemoryLayout>
+      <Name>IO Analog Homomixer</Name>
+      <Number>9</Number>
+      <ProgrammingLanguage>LAD</ProgrammingLanguage>
+      <SetENOAutomatically>false</SetENOAutomatically>
+      <UDABlockProperties />
+      <UDAEnableTagReadback>false</UDAEnableTagReadback>
+    </AttributeList>
+    <ObjectList>
+      <MultilingualText ID="1" CompositionName="Comment">
+        <ObjectList>
+          <MultilingualTextItem ID="2" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+          <MultilingualTextItem ID="3" CompositionName="Items">
+            <AttributeList>
+              <Culture>id-ID</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+      <SW.Blocks.CompileUnit ID="4" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><FlgNet xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/FlgNet/v4">
+  <Parts>
+    <Access Scope="LocalVariable" UId="21">
+      <Symbol>
+        <Component Name="Init" />
+      </Symbol>
+    </Access>
+    <Access Scope="LocalVariable" UId="22">
+      <Symbol>
+        <Component Name="Reset" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="23">
+      <Symbol>
+        <Component Name="FT-12.01 Flowrate" />
+      </Symbol>
+    </Access>
+    <Access Scope="LiteralConstant" UId="24">
+      <Constant>
+        <ConstantType>Real</ConstantType>
+        <ConstantValue>350.0</ConstantValue>
+      </Constant>
+    </Access>
+    <Access Scope="LiteralConstant" UId="25">
+      <Constant>
+        <ConstantType>String</ConstantType>
+        <ConstantValue>'FT-12.01'</ConstantValue>
+      </Constant>
+    </Access>
+    <Call UId="26">
+      <CallInfo Name="Ana_w_K1K2" BlockType="FB">
+        <Instance Scope="LocalVariable" UId="27">
+          <Component Name="FT-12.01" />
+        </Instance>
+        <Parameter Name="LOCK" Section="Input" Type="Bool" />
+        <Parameter Name="ERR_EXTERN" Section="Input" Type="Bool" />
+        <Parameter Name="LIOP_SEL" Section="Input" Type="Bool" />
+        <Parameter Name="L_SIM" Section="Input" Type="Bool" />
+        <Parameter Name="L_RESET" Section="Input" Type="Bool" />
+        <Parameter Name="IN_MODE" Section="Input" Type="Bool" />
+        <Parameter Name="BIPOLAR" Section="Input" Type="Bool" />
+        <Parameter Name="IN_INT" Section="Input" Type="Int" />
+        <Parameter Name="IN" Section="Input" Type="Real" />
+        <Parameter Name="IN_SIM" Section="Input" Type="Real" />
+        <Parameter Name="HI_LIM" Section="Input" Type="Real" />
+        <Parameter Name="LO_LIM" Section="Input" Type="Real" />
+        <Parameter Name="K1_UNI" Section="Input" Type="Real" />
+        <Parameter Name="K2_UNI" Section="Input" Type="Real" />
+        <Parameter Name="LIM_ULA_Enable" Section="Input" Type="Bool" />
+        <Parameter Name="LIM_ULA" Section="Input" Type="Real" />
+        <Parameter Name="LIM_ULW_Enable" Section="Input" Type="Bool" />
+        <Parameter Name="LIM_ULW" Section="Input" Type="Real" />
+        <Parameter Name="LIM_LLW_Enable" Section="Input" Type="Bool" />
+        <Parameter Name="LIM_LLW" Section="Input" Type="Real" />
+        <Parameter Name="LIM_LLA_Enable" Section="Input" Type="Bool" />
+        <Parameter Name="LIM_LLA" Section="Input" Type="Real" />
+        <Parameter Name="LIM_HYS_Set" Section="Input" Type="Bool" />
+        <Parameter Name="LIM_HYS" Section="Input" Type="Real" />
+        <Parameter Name="INSTANCE" Section="Input" Type="String" />
+        <Parameter Name="RESTART" Section="Input" Type="Bool" />
+        <Parameter Name="QdwState" Section="Output" Type="DWord" />
+        <Parameter Name="QOUT" Section="Output" Type="Real" />
+        <Parameter Name="QHI_LIM" Section="Output" Type="Real" />
+        <Parameter Name="QLO_LIM" Section="Output" Type="Real" />
+        <Parameter Name="QLIM_ULA_Enable" Section="Output" Type="Bool" />
+        <Parameter Name="QLIM_ULA" Section="Output" Type="Real" />
+        <Parameter Name="QLIM_ULW_Enable" Section="Output" Type="Bool" />
+        <Parameter Name="QLIM_ULW" Section="Output" Type="Real" />
+        <Parameter Name="QLIM_LLW_Enable" Section="Output" Type="Bool" />
+        <Parameter Name="QLIM_LLW" Section="Output" Type="Real" />
+        <Parameter Name="QLIM_LLA_Enable" Section="Output" Type="Bool" />
+        <Parameter Name="QLIM_LLA" Section="Output" Type="Real" />
+        <Parameter Name="QLIM_HYS" Section="Output" Type="Real" />
+        <Parameter Name="QALARM_UL" Section="Output" Type="Bool" />
+        <Parameter Name="QWARN_UL" Section="Output" Type="Bool" />
+        <Parameter Name="QWARN_LL" Section="Output" Type="Bool" />
+        <Parameter Name="QALARM_LL" Section="Output" Type="Bool" />
+        <Parameter Name="QSIM" Section="Output" Type="Bool" />
+        <Parameter Name="QLOCK" Section="Output" Type="Bool" />
+        <Parameter Name="QERR" Section="Output" Type="Bool" />
+        <Parameter Name="QERR_EXT" Section="Output" Type="Bool" />
+        <Parameter Name="QERR_OVERRUN" Section="Output" Type="Bool" />
+        <Parameter Name="QERR_HIGHRANGE" Section="Output" Type="Bool" />
+        <Parameter Name="QERR_LOWRANGE" Section="Output" Type="Bool" />
+        <Parameter Name="QERR_WIRE" Section="Output" Type="Bool" />
+        <Parameter Name="QwAlarm" Section="Output" Type="Word" />
+        <Parameter Name="VISIBILITY" Section="InOut" Type="Byte" />
+        <Parameter Name="OPdwCmd" Section="InOut" Type="DWord" />
+      </CallInfo>
+    </Call>
+  </Parts>
+  <Wires>
+    <Wire UId="77">
+      <Powerrail />
+      <NameCon UId="26" Name="en" />
+    </Wire>
+    <Wire UId="78">
+      <OpenCon UId="28" />
+      <NameCon UId="26" Name="LOCK" />
+    </Wire>
+    <Wire UId="79">
+      <OpenCon UId="29" />
+      <NameCon UId="26" Name="ERR_EXTERN" />
+    </Wire>
+    <Wire UId="80">
+      <IdentCon UId="21" />
+      <NameCon UId="26" Name="LIOP_SEL" />
+    </Wire>
+    <Wire UId="81">
+      <OpenCon UId="30" />
+      <NameCon UId="26" Name="L_SIM" />
+    </Wire>
+    <Wire UId="82">
+      <IdentCon UId="22" />
+      <NameCon UId="26" Name="L_RESET" />
+    </Wire>
+    <Wire UId="83">
+      <OpenCon UId="31" />
+      <NameCon UId="26" Name="IN_MODE" />
+    </Wire>
+    <Wire UId="84">
+      <OpenCon UId="32" />
+      <NameCon UId="26" Name="BIPOLAR" />
+    </Wire>
+    <Wire UId="85">
+      <IdentCon UId="23" />
+      <NameCon UId="26" Name="IN_INT" />
+    </Wire>
+    <Wire UId="86">
+      <OpenCon UId="33" />
+      <NameCon UId="26" Name="IN" />
+    </Wire>
+    <Wire UId="87">
+      <OpenCon UId="34" />
+      <NameCon UId="26" Name="IN_SIM" />
+    </Wire>
+    <Wire UId="88">
+      <IdentCon UId="24" />
+      <NameCon UId="26" Name="HI_LIM" />
+    </Wire>
+    <Wire UId="89">
+      <OpenCon UId="35" />
+      <NameCon UId="26" Name="LO_LIM" />
+    </Wire>
+    <Wire UId="90">
+      <OpenCon UId="36" />
+      <NameCon UId="26" Name="K1_UNI" />
+    </Wire>
+    <Wire UId="91">
+      <OpenCon UId="37" />
+      <NameCon UId="26" Name="K2_UNI" />
+    </Wire>
+    <Wire UId="92">
+      <OpenCon UId="38" />
+      <NameCon UId="26" Name="LIM_ULA_Enable" />
+    </Wire>
+    <Wire UId="93">
+      <OpenCon UId="39" />
+      <NameCon UId="26" Name="LIM_ULA" />
+    </Wire>
+    <Wire UId="94">
+      <OpenCon UId="40" />
+      <NameCon UId="26" Name="LIM_ULW_Enable" />
+    </Wire>
+    <Wire UId="95">
+      <OpenCon UId="41" />
+      <NameCon UId="26" Name="LIM_ULW" />
+    </Wire>
+    <Wire UId="96">
+      <OpenCon UId="42" />
+      <NameCon UId="26" Name="LIM_LLW_Enable" />
+    </Wire>
+    <Wire UId="97">
+      <OpenCon UId="43" />
+      <NameCon UId="26" Name="LIM_LLW" />
+    </Wire>
+    <Wire UId="98">
+      <OpenCon UId="44" />
+      <NameCon UId="26" Name="LIM_LLA_Enable" />
+    </Wire>
+    <Wire UId="99">
+      <OpenCon UId="45" />
+      <NameCon UId="26" Name="LIM_LLA" />
+    </Wire>
+    <Wire UId="100">
+      <OpenCon UId="46" />
+      <NameCon UId="26" Name="LIM_HYS_Set" />
+    </Wire>
+    <Wire UId="101">
+      <OpenCon UId="47" />
+      <NameCon UId="26" Name="LIM_HYS" />
+    </Wire>
+    <Wire UId="102">
+      <IdentCon UId="25" />
+      <NameCon UId="26" Name="INSTANCE" />
+    </Wire>
+    <Wire UId="103">
+      <OpenCon UId="48" />
+      <NameCon UId="26" Name="RESTART" />
+    </Wire>
+    <Wire UId="104">
+      <OpenCon UId="49" />
+      <NameCon UId="26" Name="VISIBILITY" />
+    </Wire>
+    <Wire UId="105">
+      <OpenCon UId="50" />
+      <NameCon UId="26" Name="OPdwCmd" />
+    </Wire>
+    <Wire UId="106">
+      <NameCon UId="26" Name="QdwState" />
+      <OpenCon UId="51" />
+    </Wire>
+    <Wire UId="107">
+      <NameCon UId="26" Name="QOUT" />
+      <OpenCon UId="52" />
+    </Wire>
+    <Wire UId="108">
+      <NameCon UId="26" Name="QHI_LIM" />
+      <OpenCon UId="53" />
+    </Wire>
+    <Wire UId="109">
+      <NameCon UId="26" Name="QLO_LIM" />
+      <OpenCon UId="54" />
+    </Wire>
+    <Wire UId="110">
+      <NameCon UId="26" Name="QLIM_ULA_Enable" />
+      <OpenCon UId="55" />
+    </Wire>
+    <Wire UId="111">
+      <NameCon UId="26" Name="QLIM_ULA" />
+      <OpenCon UId="56" />
+    </Wire>
+    <Wire UId="112">
+      <NameCon UId="26" Name="QLIM_ULW_Enable" />
+      <OpenCon UId="57" />
+    </Wire>
+    <Wire UId="113">
+      <NameCon UId="26" Name="QLIM_ULW" />
+      <OpenCon UId="58" />
+    </Wire>
+    <Wire UId="114">
+      <NameCon UId="26" Name="QLIM_LLW_Enable" />
+      <OpenCon UId="59" />
+    </Wire>
+    <Wire UId="115">
+      <NameCon UId="26" Name="QLIM_LLW" />
+      <OpenCon UId="60" />
+    </Wire>
+    <Wire UId="116">
+      <NameCon UId="26" Name="QLIM_LLA_Enable" />
+      <OpenCon UId="61" />
+    </Wire>
+    <Wire UId="117">
+      <NameCon UId="26" Name="QLIM_LLA" />
+      <OpenCon UId="62" />
+    </Wire>
+    <Wire UId="118">
+      <NameCon UId="26" Name="QLIM_HYS" />
+      <OpenCon UId="63" />
+    </Wire>
+    <Wire UId="119">
+      <NameCon UId="26" Name="QALARM_UL" />
+      <OpenCon UId="64" />
+    </Wire>
+    <Wire UId="120">
+      <NameCon UId="26" Name="QWARN_UL" />
+      <OpenCon UId="65" />
+    </Wire>
+    <Wire UId="121">
+      <NameCon UId="26" Name="QWARN_LL" />
+      <OpenCon UId="66" />
+    </Wire>
+    <Wire UId="122">
+      <NameCon UId="26" Name="QALARM_LL" />
+      <OpenCon UId="67" />
+    </Wire>
+    <Wire UId="123">
+      <NameCon UId="26" Name="QSIM" />
+      <OpenCon UId="68" />
+    </Wire>
+    <Wire UId="124">
+      <NameCon UId="26" Name="QLOCK" />
+      <OpenCon UId="69" />
+    </Wire>
+    <Wire UId="125">
+      <NameCon UId="26" Name="QERR" />
+      <OpenCon UId="70" />
+    </Wire>
+    <Wire UId="126">
+      <NameCon UId="26" Name="QERR_EXT" />
+      <OpenCon UId="71" />
+    </Wire>
+    <Wire UId="127">
+      <NameCon UId="26" Name="QERR_OVERRUN" />
+      <OpenCon UId="72" />
+    </Wire>
+    <Wire UId="128">
+      <NameCon UId="26" Name="QERR_HIGHRANGE" />
+      <OpenCon UId="73" />
+    </Wire>
+    <Wire UId="129">
+      <NameCon UId="26" Name="QERR_LOWRANGE" />
+      <OpenCon UId="74" />
+    </Wire>
+    <Wire UId="130">
+      <NameCon UId="26" Name="QERR_WIRE" />
+      <OpenCon UId="75" />
+    </Wire>
+    <Wire UId="131">
+      <NameCon UId="26" Name="QwAlarm" />
+      <OpenCon UId="76" />
+    </Wire>
+  </Wires>
+</FlgNet></NetworkSource>
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="5" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="6" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="7" CompositionName="Items">
+                <AttributeList>
+                  <Culture>id-ID</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="8" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="9" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text>FT-12.01 Flowrate</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="A" CompositionName="Items">
+                <AttributeList>
+                  <Culture>id-ID</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="B" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><FlgNet xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/FlgNet/v4">
+  <Parts>
+    <Access Scope="LocalVariable" UId="21">
+      <Symbol>
+        <Component Name="Init" />
+      </Symbol>
+    </Access>
+    <Access Scope="LocalVariable" UId="22">
+      <Symbol>
+        <Component Name="Reset" />
+      </Symbol>
+    </Access>
+    <Access Scope="GlobalVariable" UId="23">
+      <Symbol>
+        <Component Name="FT-12.02 Flowrate" />
+      </Symbol>
+    </Access>
+    <Access Scope="LiteralConstant" UId="24">
+      <Constant>
+        <ConstantType>Real</ConstantType>
+        <ConstantValue>350.0</ConstantValue>
+      </Constant>
+    </Access>
+    <Access Scope="LiteralConstant" UId="25">
+      <Constant>
+        <ConstantType>String</ConstantType>
+        <ConstantValue>'FT-12.02'</ConstantValue>
+      </Constant>
+    </Access>
+    <Call UId="26">
+      <CallInfo Name="Ana_w_K1K2" BlockType="FB">
+        <Instance Scope="LocalVariable" UId="27">
+          <Component Name="FT-12.02" />
+        </Instance>
+        <Parameter Name="LOCK" Section="Input" Type="Bool" />
+        <Parameter Name="ERR_EXTERN" Section="Input" Type="Bool" />
+        <Parameter Name="LIOP_SEL" Section="Input" Type="Bool" />
+        <Parameter Name="L_SIM" Section="Input" Type="Bool" />
+        <Parameter Name="L_RESET" Section="Input" Type="Bool" />
+        <Parameter Name="IN_MODE" Section="Input" Type="Bool" />
+        <Parameter Name="BIPOLAR" Section="Input" Type="Bool" />
+        <Parameter Name="IN_INT" Section="Input" Type="Int" />
+        <Parameter Name="IN" Section="Input" Type="Real" />
+        <Parameter Name="IN_SIM" Section="Input" Type="Real" />
+        <Parameter Name="HI_LIM" Section="Input" Type="Real" />
+        <Parameter Name="LO_LIM" Section="Input" Type="Real" />
+        <Parameter Name="K1_UNI" Section="Input" Type="Real" />
+        <Parameter Name="K2_UNI" Section="Input" Type="Real" />
+        <Parameter Name="LIM_ULA_Enable" Section="Input" Type="Bool" />
+        <Parameter Name="LIM_ULA" Section="Input" Type="Real" />
+        <Parameter Name="LIM_ULW_Enable" Section="Input" Type="Bool" />
+        <Parameter Name="LIM_ULW" Section="Input" Type="Real" />
+        <Parameter Name="LIM_LLW_Enable" Section="Input" Type="Bool" />
+        <Parameter Name="LIM_LLW" Section="Input" Type="Real" />
+        <Parameter Name="LIM_LLA_Enable" Section="Input" Type="Bool" />
+        <Parameter Name="LIM_LLA" Section="Input" Type="Real" />
+        <Parameter Name="LIM_HYS_Set" Section="Input" Type="Bool" />
+        <Parameter Name="LIM_HYS" Section="Input" Type="Real" />
+        <Parameter Name="INSTANCE" Section="Input" Type="String" />
+        <Parameter Name="RESTART" Section="Input" Type="Bool" />
+        <Parameter Name="QdwState" Section="Output" Type="DWord" />
+        <Parameter Name="QOUT" Section="Output" Type="Real" />
+        <Parameter Name="QHI_LIM" Section="Output" Type="Real" />
+        <Parameter Name="QLO_LIM" Section="Output" Type="Real" />
+        <Parameter Name="QLIM_ULA_Enable" Section="Output" Type="Bool" />
+        <Parameter Name="QLIM_ULA" Section="Output" Type="Real" />
+        <Parameter Name="QLIM_ULW_Enable" Section="Output" Type="Bool" />
+        <Parameter Name="QLIM_ULW" Section="Output" Type="Real" />
+        <Parameter Name="QLIM_LLW_Enable" Section="Output" Type="Bool" />
+        <Parameter Name="QLIM_LLW" Section="Output" Type="Real" />
+        <Parameter Name="QLIM_LLA_Enable" Section="Output" Type="Bool" />
+        <Parameter Name="QLIM_LLA" Section="Output" Type="Real" />
+        <Parameter Name="QLIM_HYS" Section="Output" Type="Real" />
+        <Parameter Name="QALARM_UL" Section="Output" Type="Bool" />
+        <Parameter Name="QWARN_UL" Section="Output" Type="Bool" />
+        <Parameter Name="QWARN_LL" Section="Output" Type="Bool" />
+        <Parameter Name="QALARM_LL" Section="Output" Type="Bool" />
+        <Parameter Name="QSIM" Section="Output" Type="Bool" />
+        <Parameter Name="QLOCK" Section="Output" Type="Bool" />
+        <Parameter Name="QERR" Section="Output" Type="Bool" />
+        <Parameter Name="QERR_EXT" Section="Output" Type="Bool" />
+        <Parameter Name="QERR_OVERRUN" Section="Output" Type="Bool" />
+        <Parameter Name="QERR_HIGHRANGE" Section="Output" Type="Bool" />
+        <Parameter Name="QERR_LOWRANGE" Section="Output" Type="Bool" />
+        <Parameter Name="QERR_WIRE" Section="Output" Type="Bool" />
+        <Parameter Name="QwAlarm" Section="Output" Type="Word" />
+        <Parameter Name="VISIBILITY" Section="InOut" Type="Byte" />
+        <Parameter Name="OPdwCmd" Section="InOut" Type="DWord" />
+      </CallInfo>
+    </Call>
+  </Parts>
+  <Wires>
+    <Wire UId="77">
+      <Powerrail />
+      <NameCon UId="26" Name="en" />
+    </Wire>
+    <Wire UId="78">
+      <OpenCon UId="28" />
+      <NameCon UId="26" Name="LOCK" />
+    </Wire>
+    <Wire UId="79">
+      <OpenCon UId="29" />
+      <NameCon UId="26" Name="ERR_EXTERN" />
+    </Wire>
+    <Wire UId="80">
+      <IdentCon UId="21" />
+      <NameCon UId="26" Name="LIOP_SEL" />
+    </Wire>
+    <Wire UId="81">
+      <OpenCon UId="30" />
+      <NameCon UId="26" Name="L_SIM" />
+    </Wire>
+    <Wire UId="82">
+      <IdentCon UId="22" />
+      <NameCon UId="26" Name="L_RESET" />
+    </Wire>
+    <Wire UId="83">
+      <OpenCon UId="31" />
+      <NameCon UId="26" Name="IN_MODE" />
+    </Wire>
+    <Wire UId="84">
+      <OpenCon UId="32" />
+      <NameCon UId="26" Name="BIPOLAR" />
+    </Wire>
+    <Wire UId="85">
+      <IdentCon UId="23" />
+      <NameCon UId="26" Name="IN_INT" />
+    </Wire>
+    <Wire UId="86">
+      <OpenCon UId="33" />
+      <NameCon UId="26" Name="IN" />
+    </Wire>
+    <Wire UId="87">
+      <OpenCon UId="34" />
+      <NameCon UId="26" Name="IN_SIM" />
+    </Wire>
+    <Wire UId="88">
+      <IdentCon UId="24" />
+      <NameCon UId="26" Name="HI_LIM" />
+    </Wire>
+    <Wire UId="89">
+      <OpenCon UId="35" />
+      <NameCon UId="26" Name="LO_LIM" />
+    </Wire>
+    <Wire UId="90">
+      <OpenCon UId="36" />
+      <NameCon UId="26" Name="K1_UNI" />
+    </Wire>
+    <Wire UId="91">
+      <OpenCon UId="37" />
+      <NameCon UId="26" Name="K2_UNI" />
+    </Wire>
+    <Wire UId="92">
+      <OpenCon UId="38" />
+      <NameCon UId="26" Name="LIM_ULA_Enable" />
+    </Wire>
+    <Wire UId="93">
+      <OpenCon UId="39" />
+      <NameCon UId="26" Name="LIM_ULA" />
+    </Wire>
+    <Wire UId="94">
+      <OpenCon UId="40" />
+      <NameCon UId="26" Name="LIM_ULW_Enable" />
+    </Wire>
+    <Wire UId="95">
+      <OpenCon UId="41" />
+      <NameCon UId="26" Name="LIM_ULW" />
+    </Wire>
+    <Wire UId="96">
+      <OpenCon UId="42" />
+      <NameCon UId="26" Name="LIM_LLW_Enable" />
+    </Wire>
+    <Wire UId="97">
+      <OpenCon UId="43" />
+      <NameCon UId="26" Name="LIM_LLW" />
+    </Wire>
+    <Wire UId="98">
+      <OpenCon UId="44" />
+      <NameCon UId="26" Name="LIM_LLA_Enable" />
+    </Wire>
+    <Wire UId="99">
+      <OpenCon UId="45" />
+      <NameCon UId="26" Name="LIM_LLA" />
+    </Wire>
+    <Wire UId="100">
+      <OpenCon UId="46" />
+      <NameCon UId="26" Name="LIM_HYS_Set" />
+    </Wire>
+    <Wire UId="101">
+      <OpenCon UId="47" />
+      <NameCon UId="26" Name="LIM_HYS" />
+    </Wire>
+    <Wire UId="102">
+      <IdentCon UId="25" />
+      <NameCon UId="26" Name="INSTANCE" />
+    </Wire>
+    <Wire UId="103">
+      <OpenCon UId="48" />
+      <NameCon UId="26" Name="RESTART" />
+    </Wire>
+    <Wire UId="104">
+      <OpenCon UId="49" />
+      <NameCon UId="26" Name="VISIBILITY" />
+    </Wire>
+    <Wire UId="105">
+      <OpenCon UId="50" />
+      <NameCon UId="26" Name="OPdwCmd" />
+    </Wire>
+    <Wire UId="106">
+      <NameCon UId="26" Name="QdwState" />
+      <OpenCon UId="51" />
+    </Wire>
+    <Wire UId="107">
+      <NameCon UId="26" Name="QOUT" />
+      <OpenCon UId="52" />
+    </Wire>
+    <Wire UId="108">
+      <NameCon UId="26" Name="QHI_LIM" />
+      <OpenCon UId="53" />
+    </Wire>
+    <Wire UId="109">
+      <NameCon UId="26" Name="QLO_LIM" />
+      <OpenCon UId="54" />
+    </Wire>
+    <Wire UId="110">
+      <NameCon UId="26" Name="QLIM_ULA_Enable" />
+      <OpenCon UId="55" />
+    </Wire>
+    <Wire UId="111">
+      <NameCon UId="26" Name="QLIM_ULA" />
+      <OpenCon UId="56" />
+    </Wire>
+    <Wire UId="112">
+      <NameCon UId="26" Name="QLIM_ULW_Enable" />
+      <OpenCon UId="57" />
+    </Wire>
+    <Wire UId="113">
+      <NameCon UId="26" Name="QLIM_ULW" />
+      <OpenCon UId="58" />
+    </Wire>
+    <Wire UId="114">
+      <NameCon UId="26" Name="QLIM_LLW_Enable" />
+      <OpenCon UId="59" />
+    </Wire>
+    <Wire UId="115">
+      <NameCon UId="26" Name="QLIM_LLW" />
+      <OpenCon UId="60" />
+    </Wire>
+    <Wire UId="116">
+      <NameCon UId="26" Name="QLIM_LLA_Enable" />
+      <OpenCon UId="61" />
+    </Wire>
+    <Wire UId="117">
+      <NameCon UId="26" Name="QLIM_LLA" />
+      <OpenCon UId="62" />
+    </Wire>
+    <Wire UId="118">
+      <NameCon UId="26" Name="QLIM_HYS" />
+      <OpenCon UId="63" />
+    </Wire>
+    <Wire UId="119">
+      <NameCon UId="26" Name="QALARM_UL" />
+      <OpenCon UId="64" />
+    </Wire>
+    <Wire UId="120">
+      <NameCon UId="26" Name="QWARN_UL" />
+      <OpenCon UId="65" />
+    </Wire>
+    <Wire UId="121">
+      <NameCon UId="26" Name="QWARN_LL" />
+      <OpenCon UId="66" />
+    </Wire>
+    <Wire UId="122">
+      <NameCon UId="26" Name="QALARM_LL" />
+      <OpenCon UId="67" />
+    </Wire>
+    <Wire UId="123">
+      <NameCon UId="26" Name="QSIM" />
+      <OpenCon UId="68" />
+    </Wire>
+    <Wire UId="124">
+      <NameCon UId="26" Name="QLOCK" />
+      <OpenCon UId="69" />
+    </Wire>
+    <Wire UId="125">
+      <NameCon UId="26" Name="QERR" />
+      <OpenCon UId="70" />
+    </Wire>
+    <Wire UId="126">
+      <NameCon UId="26" Name="QERR_EXT" />
+      <OpenCon UId="71" />
+    </Wire>
+    <Wire UId="127">
+      <NameCon UId="26" Name="QERR_OVERRUN" />
+      <OpenCon UId="72" />
+    </Wire>
+    <Wire UId="128">
+      <NameCon UId="26" Name="QERR_HIGHRANGE" />
+      <OpenCon UId="73" />
+    </Wire>
+    <Wire UId="129">
+      <NameCon UId="26" Name="QERR_LOWRANGE" />
+      <OpenCon UId="74" />
+    </Wire>
+    <Wire UId="130">
+      <NameCon UId="26" Name="QERR_WIRE" />
+      <OpenCon UId="75" />
+    </Wire>
+    <Wire UId="131">
+      <NameCon UId="26" Name="QwAlarm" />
+      <OpenCon UId="76" />
+    </Wire>
+  </Wires>
+</FlgNet></NetworkSource>
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="C" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="D" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="E" CompositionName="Items">
+                <AttributeList>
+                  <Culture>id-ID</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="F" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="10" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text>FT-12.02 Flowrate</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="11" CompositionName="Items">
+                <AttributeList>
+                  <Culture>id-ID</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="12" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource />
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="13" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="14" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="15" CompositionName="Items">
+                <AttributeList>
+                  <Culture>id-ID</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="16" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="17" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="18" CompositionName="Items">
+                <AttributeList>
+                  <Culture>id-ID</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <MultilingualText ID="19" CompositionName="Title">
+        <ObjectList>
+          <MultilingualTextItem ID="1A" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+          <MultilingualTextItem ID="1B" CompositionName="Items">
+            <AttributeList>
+              <Culture>id-ID</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+    </ObjectList>
+  </SW.Blocks.FB>
+</Document>

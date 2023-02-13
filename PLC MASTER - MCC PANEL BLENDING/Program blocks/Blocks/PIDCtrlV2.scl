@@ -1,0 +1,387 @@
+﻿FUNCTION_BLOCK "PIDCtrlV2"
+{ S7_Optimized_Access := 'FALSE' }
+NAME : PIDCtrl
+VERSION : 1.0
+   VAR_INPUT 
+      InvertControl : Bool := 0;   // Enables inversion of control logic
+      InputPerOn : Bool := 0;   // Selection of process value
+      InputUpperLimit : Real := 120.0;   // Entry for process value high limit
+      InputLowerLimit : Real := 0.0;   // Entry for process value low limit
+      UpperPointOut : Real := 100.0;   // Entry for scaled high process value
+      LowerPointOut : Real := 0.0;   // Entry for scaled low process value
+      UpperPointIn : Real := 27648.0;   // Entry for high value of Input_PER
+      LowerPointIn : Real := 0.0;   // Entry for low value of Input_PER
+      InputUpperWarning : Real := 200.0;   // Entry for warning high limit
+      InputLowerWarning : Real := -200.0;   // Entry for warning low limit
+      MinimumOnTime : Real := 0.0;   // Entry for minimum ON time
+      MinimumOffTime : Real := 0.0;   // Entry for minimum OFF time
+      OutputUpperLimit : Real := 100.0;   // Entry for high limit of output value
+      OutputLowerLimit : Real := 0.0;   // Entry for low limit of output value
+      SetpointUpperLimit : Real := 100.0;   // High limit of setpoint
+      SetpointLowerLimit : Real := 0.0;   // Low limit of the setpoint
+      PIDManualEnable : Bool := 0;   // Enables manual entry of PID parameters
+      Gain : Real := 1.0;   // Entry for proportional gain
+      Ti : Real := 20.0;   // Entry for integral action time
+      Td : Real := 0.0;   // Entry for derivative action time
+      TdFiltRatio : Real := 0.0;   // Entry for derivative delay coefficient
+      PWeighting : Real := 1.0;   // Entry for proportional action weighting
+      DWeighting : Real := 1.0;   // Entry for derivative action weighting
+      Cycle : Real := 0.5;   // Entry for sampling time for the PID algorithm
+      Setpoint : Real := 0.0;   // Setpoint of the PID controller in automatic mode
+      Input : Real := 0.0;   // Process value in REAL format
+      Input_PER : Int := 0;   // Analog process value
+      ManualValue : Real := 0.0;   // This value is used as the output value in manual mode
+      LOCK : Bool := 0;   // 1 = Interlock active
+      ERR_EXTERN : Bool := 0;   // 1 = External error arised
+      LIOP_SEL : Bool := 0;   // 0 = Operator; 1 = Linking
+      L_AUT : Bool := 1;   // 0 = Manual; 1 = Automatic
+      L_REMOTE : Bool := 0;   // 0 = Local; 1 = Remote
+      L_RESET : Bool := 0;   // 1 = Reset error peripherie
+      INSTANCE : String[254] := 'PIDCtrlV2_001';   // Filter attribute for message view, also used for labelling
+      RESTART : Bool := 0;   // 1 = Initialize FB at startup (first cycle of PLC)
+   END_VAR
+
+   VAR_OUTPUT 
+      QSetpoint : Real := 0.0;   // Setpoint of the PID controller
+      ScaledInput : Real := 0.0;   // Scaled process value
+      Output : Real := 0.0;   // Output value in REAL format
+      Output_PER : Int := 0;   // Analog output value
+      Output_PWM : Bool := 0;   // 1 = Pulse-width-modulated output value active
+      SetpointLimit_H : Bool := 0;   // 1 = Setpoint absolute high limit has been reached
+      SetpointLimit_L : Bool := 0;   // 1 = Setpoint absolute low limit has been reached
+      InputWarning_H : Bool := 0;   // 1 = Process value has been reached or exceeded the warning high limit
+      InputWarning_L : Bool := 0;   // 1 = Process value has been reached or fallen below the warning low limit
+      State : Int := 0;   // Current operating mode of the PID controller
+      Error : Bool := 0;   // 1 = at least one error message is pending in this cycle
+      ErrorBits : DWord := 16#00000000;   // This parameter shows which error messages are pending
+      QGain : Real := 0.0;   // Setpoint of proportional gain
+      QTi : Real := 0.0;   // Setpoint of integral action time
+      QTd : Real := 0.0;   // Setpoint of derivative action time
+      QdwState : DWord := 16#00000000;   // Status HMI
+      QPERIPH : Bool := 0;   // 1 = Analog process value active
+      QMAN_AUT : Bool := 0;   // 0 = Manual; 1 = Process
+      QREMOTE : Bool := 0;   // 0 = Local; 1 = Remote
+      QLOCK : Bool := 0;   // 1 = Interlock is active
+      QERR : Bool := 0;   // 1 = Common error
+      QERR_EXT : Bool := 0;   // 1 = External error
+      QwAlarm : Word := 16#0000;   // Bit alarm procedure
+   END_VAR
+
+   VAR_IN_OUT 
+      VISIBILITY : Word := 16#0000;   // Bit 0: Tab1 of window; Bit 1: Tab2 of window; ... ; Bit 7: Minimize
+      OPdwCmd : DWord := 16#00000000;   // Contorl word HMI
+   END_VAR
+
+   VAR 
+      OP_Input_PER_On : Bool := 0;
+      OP_Setpoint : Real := 0.0;
+      OP_Output : Real := 0.0;
+      OP_ManualValue : Real := 0.0;
+      OP_InvertControl : Bool := 0;
+      OP_Cycle : Real := 0.0;
+      OP_Gain : Real := 0.0;
+      OP_Ti : Real := 0.0;
+      OP_Td : Real := 0.0;
+      OP_TdFiltRatio : Real := 0.0;
+      OP_PWeighting : Real := 0.0;
+      OP_DWeighting : Real := 0.0;
+      OP_OutputUpperLimit : Real := 100.0;
+      OP_OutputLowerLimit : Real := 0.0;
+      OP_MinimumOnTime : Real := 0.0;
+      OP_MinimumOffTime : Real := 0.0;
+      OP_SetpointUpperLimit : Real := 0.0;
+      OP_SetpointLowerLimit : Real := 0.0;
+      OP_InputUpperLimit : Real := 0.0;
+      OP_InputLowerLimit : Real := 0.0;
+      OP_LowerPointIn : Real := 0.0;
+      OP_UpperPointIn : Real := 0.0;
+      OP_LowerPointOut : Real := 0.0;
+      OP_UpperPointOut : Real := 0.0;
+      OP_InputUpperWarning : Real := 0.0;
+      OP_InputLowerWarning : Real := 0.0;
+      OP_State : Int := 0;
+      OP_VISIBILITY : Word := 16#0000;
+      VISIBILITY_OLD : Word := 16#0000;
+      TP_SEL : Bool := 0;
+      TI_SEL : Bool := 0;
+      TD_SEL : Bool := 0;
+      ManualEnable : Bool;
+      ERR_EXTERN_OLD : Bool;
+      L_RESET_OLD : Bool;
+   END_VAR
+
+
+BEGIN
+	// Start up
+	IF #RESTART THEN // Restart case   
+	  #VISIBILITY := W#16#0;
+	ELSE // Normal case
+	    
+	  // Check errors ===========================================================
+	  #QERR_EXT := #ERR_EXTERN; // 1 = External error
+	  #QLOCK := #LOCK; // 1 = Interlock is active
+	  
+	  IF (#ERR_EXTERN AND NOT #ERR_EXTERN_OLD) THEN
+	      #QERR := TRUE;
+	  END_IF;
+	  
+	  // MANUAL/PROCESS Operation ===============================================
+	  IF ((#LIOP_SEL AND NOT #L_AUT) OR (#OPdwCmd.%X16 AND NOT #LIOP_SEL)) THEN
+	      #QMAN_AUT := FALSE; // 0 = Manual
+	  ELSIF ((#LIOP_SEL AND #L_AUT) OR (#OPdwCmd.%X17 AND NOT #LIOP_SEL)) THEN
+	      #QMAN_AUT := TRUE; // 1 = Process
+	  END_IF;
+	    
+	  IF NOT #QLOCK THEN
+	      #ManualEnable := NOT #QMAN_AUT;
+	  END_IF;
+	  
+	  // LOCAL/REMOTE Operation =================================================
+	  IF ((#LIOP_SEL AND NOT #L_REMOTE) OR (#OPdwCmd.%X18 AND NOT #LIOP_SEL)) THEN
+	      #QREMOTE := FALSE; // 0 = Local
+	  ELSIF ((#LIOP_SEL AND #L_REMOTE) OR (#OPdwCmd.%X19 AND NOT #LIOP_SEL)) THEN
+	      #QREMOTE := TRUE; // 1 = Remote
+	  END_IF;
+	      
+	  // Toggle Invert Control ==================================================
+	  IF (#OPdwCmd.%X5 AND NOT #LIOP_SEL AND #QREMOTE AND NOT #QLOCK) THEN
+	      #OP_InvertControl := NOT #OP_InvertControl;
+	  END_IF;
+	      
+	  // SET Periphery/Extern connection ========================================
+	  IF (NOT #InputPerOn AND NOT #QREMOTE AND NOT #QLOCK) OR (#OPdwCmd.%X7 AND #QREMOTE AND NOT #QLOCK) THEN
+	      #QPERIPH := FALSE; // 0 = Extern
+	  ELSIF (#InputPerOn AND NOT #QREMOTE AND NOT #QLOCK) OR (#OPdwCmd.%X6 AND #QREMOTE AND NOT #QLOCK) THEN
+	    #QPERIPH := TRUE; // 1 = Periphery
+	  END_IF;
+	 
+	  // Initialization of the PID Parameter ====================================
+	  IF (NOT #QLOCK AND NOT #QREMOTE) THEN // Local control (PIDCtrlV2 Input)
+	    
+	    "PID_Compact_1".Config.InvertControl              := #InvertControl;
+	    "PID_Compact_1".Config.InputPerOn                 := #QPERIPH;
+	    "PID_Compact_1".Config.InputUpperLimit            := #InputUpperLimit;
+	    "PID_Compact_1".Config.InputLowerLimit            := #InputLowerLimit;
+	    "PID_Compact_1".Config.InputScaling.UpperPointOut := #UpperPointOut;
+	    "PID_Compact_1".Config.InputScaling.LowerPointOut := #LowerPointOut;
+	    "PID_Compact_1".Config.InputScaling.UpperPointIn  := #UpperPointIn;
+	    "PID_Compact_1".Config.InputScaling.LowerPointIn  := #LowerPointIn;
+	    "PID_Compact_1".Config.InputUpperWarning          := #InputUpperWarning;
+	    "PID_Compact_1".Config.InputLowerWarning          := #InputLowerWarning;
+	    "PID_Compact_1".Config.MinimumOnTime              := #MinimumOnTime;
+	    "PID_Compact_1".Config.MinimumOffTime             := #MinimumOffTime;
+	    "PID_Compact_1".Config.OutputUpperLimit           := #OutputUpperLimit;
+	    "PID_Compact_1".Config.OutputLowerLimit           := #OutputLowerLimit;
+	    "PID_Compact_1".Config.SetpointUpperLimit         := #SetpointUpperLimit;
+	    "PID_Compact_1".Config.SetpointLowerLimit         := #SetpointLowerLimit;
+	    
+	    IF #PIDManualEnable THEN // Manual parameter setting release
+	      
+	      "PID_Compact_1".Retain.CtrlParams.Gain        := #Gain;
+	      "PID_Compact_1".Retain.CtrlParams.Ti          := #Ti;
+	      "PID_Compact_1".Retain.CtrlParams.Td          := #Td;
+	      "PID_Compact_1".Retain.CtrlParams.TdFiltRatio := #TdFiltRatio;
+	      "PID_Compact_1".Retain.CtrlParams.PWeighting  := #PWeighting;
+	      "PID_Compact_1".Retain.CtrlParams.DWeighting  := #DWeighting;
+	      "PID_Compact_1".Retain.CtrlParams.Cycle       := #Cycle;
+	      
+	  END_IF;
+	    
+	    #OP_Setpoint := #Setpoint;
+	    #OP_ManualValue := #ManualValue;
+	    
+	  ELSIF (NOT #QLOCK AND #QREMOTE) THEN // Remote control (HMI)
+	      
+	    "PID_Compact_1".Config.InvertControl              := #OP_InvertControl;
+	    "PID_Compact_1".Config.InputPerOn                 := #QPERIPH;
+	    "PID_Compact_1".Config.InputUpperLimit            := #OP_InputUpperLimit;
+	    "PID_Compact_1".Config.InputLowerLimit            := #OP_InputLowerLimit;
+	    "PID_Compact_1".Config.InputScaling.UpperPointOut := #OP_UpperPointOut;
+	    "PID_Compact_1".Config.InputScaling.LowerPointOut := #OP_LowerPointOut;
+	    "PID_Compact_1".Config.InputScaling.UpperPointIn  := #OP_UpperPointIn;
+	    "PID_Compact_1".Config.InputScaling.LowerPointIn  := #OP_LowerPointIn;
+	    "PID_Compact_1".Config.InputUpperWarning          := #OP_InputUpperWarning;
+	    "PID_Compact_1".Config.InputLowerWarning          := #OP_InputLowerWarning;
+	    "PID_Compact_1".Config.MinimumOnTime              := #OP_MinimumOnTime;
+	    "PID_Compact_1".Config.MinimumOffTime             := #OP_MinimumOffTime;
+	    "PID_Compact_1".Config.OutputUpperLimit           := #OP_OutputUpperLimit;
+	    "PID_Compact_1".Config.OutputLowerLimit           := #OP_OutputLowerLimit;
+	    "PID_Compact_1".Config.SetpointUpperLimit         := #OP_SetpointUpperLimit;
+	    "PID_Compact_1".Config.SetpointLowerLimit         := #OP_SetpointLowerLimit;
+	    
+	    "PID_Compact_1".Retain.CtrlParams.Gain            := #OP_Gain;
+	    "PID_Compact_1".Retain.CtrlParams.Ti              := #OP_Ti;
+	    "PID_Compact_1".Retain.CtrlParams.Td              := #OP_Td;
+	    "PID_Compact_1".Retain.CtrlParams.TdFiltRatio     := #OP_TdFiltRatio;
+	    "PID_Compact_1".Retain.CtrlParams.PWeighting      := #OP_PWeighting;
+	    "PID_Compact_1".Retain.CtrlParams.DWeighting      := #OP_DWeighting;
+	    "PID_Compact_1".Retain.CtrlParams.Cycle           := #OP_Cycle;
+	
+	  END_IF;
+	  
+	  // Call PID_Compact V2 ====================================================  
+	  "PID_Compact_1"
+	    (
+	        Setpoint        := #OP_Setpoint,
+	        Input           := #Input,
+	        Input_PER       := #Input_PER,
+	        ManualEnable    := #ManualEnable,
+	        ManualValue     := #OP_ManualValue,
+	        Reset           := #OPdwCmd.%X24,
+	        ScaledInput     => #ScaledInput,
+	        Output          => #Output,
+	        Output_PER      => #Output_PER,
+	        Output_PWM      => #Output_PWM,
+	        SetpointLimit_H => #SetpointLimit_H,
+	        SetpointLimit_L => #SetpointLimit_L,
+	        InputWarning_H  => #InputWarning_H,
+	        InputWarning_L  => #InputWarning_L,
+	        State           => #State,
+	        Error           => #Error,
+	        ErrorBits       => #ErrorBits
+	    );
+	  
+	  // Tuning values ==========================================================
+	  #OP_State              := #State;
+	  #OP_Input_PER_On       := "PID_Compact_1".Config.InputPerOn;
+	  #OP_Setpoint           := "PID_Compact_1".Setpoint;
+	  #QSetpoint             := #OP_Setpoint;
+	  #OP_Output             := "PID_Compact_1".Output;
+	  #OP_ManualValue        := "PID_Compact_1".ManualValue;
+	  #OP_InvertControl      := "PID_Compact_1".Config.InvertControl;
+	  
+	  // Scaling values for Input_PER ===========================================
+	  #OP_LowerPointIn       := "PID_Compact_1".Config.InputScaling.LowerPointIn;
+	  #OP_UpperPointIn       := "PID_Compact_1".Config.InputScaling.UpperPointIn;
+	  
+	  // Limits for scaled process value ========================================
+	  #OP_LowerPointOut      := "PID_Compact_1".Config.InputScaling.LowerPointOut;
+	  #OP_UpperPointOut      := "PID_Compact_1".Config.InputScaling.UpperPointOut;
+	  
+	  // Setpoint value limits ==================================================
+	  #OP_SetpointUpperLimit := "PID_Compact_1".Config.SetpointUpperLimit;
+	  #OP_SetpointLowerLimit := "PID_Compact_1".Config.SetpointLowerLimit;
+	  
+	  // Actual value limits ====================================================
+	  #OP_InputUpperLimit    := "PID_Compact_1".Config.InputUpperLimit;
+	  #OP_InputLowerLimit    := "PID_Compact_1".Config.InputLowerLimit;
+	  #OP_InputUpperWarning  := "PID_Compact_1".Config.InputUpperWarning;
+	  #OP_InputLowerWarning  := "PID_Compact_1".Config.InputLowerWarning;
+	  
+	  // Output value limits ====================================================
+	  #OP_OutputUpperLimit   := "PID_Compact_1".Config.OutputUpperLimit;
+	  #OP_OutputLowerLimit   := "PID_Compact_1".Config.OutputLowerLimit;
+	  
+	  // PWM value limits =======================================================
+	  #OP_MinimumOnTime      := "PID_Compact_1".Config.MinimumOnTime;
+	  #OP_MinimumOffTime     := "PID_Compact_1".Config.MinimumOffTime;
+	  
+	  // Control parameters =====================================================
+	  #OP_Gain               := "PID_Compact_1".Retain.CtrlParams.Gain;
+	  #QGain                 := #OP_Gain;
+	  #OP_Ti                 := "PID_Compact_1".Retain.CtrlParams.Ti;
+	  #QTi                   := #OP_Ti;
+	  #OP_Td                 := "PID_Compact_1".Retain.CtrlParams.Td;
+	  #QTd                   := #OP_Td;
+	  #OP_TdFiltRatio        := "PID_Compact_1".Retain.CtrlParams.TdFiltRatio;
+	  #OP_PWeighting         := "PID_Compact_1".Retain.CtrlParams.PWeighting;
+	  #OP_DWeighting         := "PID_Compact_1".Retain.CtrlParams.DWeighting;
+	  #OP_Cycle              := "PID_Compact_1".Retain.CtrlParams.Cycle;
+	  
+	  // P action ===============================================================
+	  IF (#OP_Gain > 0.0) THEN
+	    #TP_SEL := TRUE;
+	  ELSE
+	    #TP_SEL := FALSE;
+	  END_IF;
+	  
+	  // I action ===============================================================
+	  IF (#OP_Ti > 0.0) THEN
+	    #TI_SEL := TRUE;
+	  ELSE
+	    #TI_SEL := FALSE;
+	  END_IF;
+	  
+	  // D action ===============================================================
+	  IF (#OP_Td > 0.0) THEN
+	    #TD_SEL := TRUE;
+	  ELSE
+	    #TD_SEL := FALSE;
+	  END_IF;
+	  
+	  // Set visibility of faceplate ============================================
+	  IF (#OP_VISIBILITY <> #VISIBILITY_OLD) THEN
+	    #VISIBILITY_OLD := #OP_VISIBILITY;
+	    #VISIBILITY := #OP_VISIBILITY;
+	  ELSIF (#VISIBILITY <> #VISIBILITY_OLD) THEN
+	    #VISIBILITY_OLD := #VISIBILITY;
+	    #OP_VISIBILITY := #VISIBILITY;
+	  END_IF;
+	  
+	  // Reset error ============================================================
+	  IF (((#OPdwCmd.%X24 AND #QREMOTE) OR (#L_RESET AND NOT #L_RESET_OLD)) AND NOT #ERR_EXTERN) THEN
+	      #QERR := FALSE;
+	  END_IF;
+	  
+	  // Save signals for edge detect ===========================================
+	  #L_RESET_OLD := #L_RESET;
+	  #ERR_EXTERN_OLD := #ERR_EXTERN;
+	  
+	  // Reset commands =========================================================
+	  #OPdwCmd := DW#16#0;
+	  
+	  // Set state for HMI ======================================================
+	  #QdwState.%X0  := #TP_SEL;
+	  #QdwState.%X1  := #TI_SEL;
+	  #QdwState.%X2  := #TD_SEL;
+	  #QdwState.%X3  := FALSE;
+	  #QdwState.%X4  := FALSE;
+	  #QdwState.%X5  := #OP_InvertControl;
+	  #QdwState.%X6  := #QPERIPH;
+	  #QdwState.%X7  := FALSE;
+	  #QdwState.%X8  := FALSE;
+	  #QdwState.%X9  := FALSE;
+	  #QdwState.%X10 := FALSE;
+	  #QdwState.%X11 := FALSE;
+	  #QdwState.%X12 := #SetpointLimit_L;
+	  #QdwState.%X13 := #InputWarning_L AND NOT #SetpointLimit_L;
+	  #QdwState.%X14 := #InputWarning_H AND NOT #SetpointLimit_H;
+	  #QdwState.%X15 := #SetpointLimit_H;
+	  #QdwState.%X16 := #QMAN_AUT;
+	  #QdwState.%X17 := #QREMOTE;
+	  #QdwState.%X18 := FALSE;
+	  #QdwState.%X19 := FALSE;
+	  #QdwState.%X20 := FALSE;
+	  #QdwState.%X21 := FALSE;
+	  #QdwState.%X22 := FALSE;
+	  #QdwState.%X23 := FALSE;
+	  #QdwState.%X24 := #QERR;
+	  #QdwState.%X25 := #QERR_EXT;
+	  #QdwState.%X26 := #QLOCK;
+	  #QdwState.%X27 := #LOCK;
+	  #QdwState.%X28 := FALSE;
+	  #QdwState.%X29 := FALSE;
+	  #QdwState.%X30 := FALSE;
+	  #QdwState.%X31 := FALSE;
+	  
+	  // Bit alarm procedure ====================================================
+	  #QwAlarm.%X0  := #SetpointLimit_L;
+	  #QwAlarm.%X1  := #SetpointLimit_H;
+	  #QwAlarm.%X2  := FALSE;
+	  #QwAlarm.%X3  := FALSE;
+	  #QwAlarm.%X4  := #QLOCK;
+	  #QwAlarm.%X5  := FALSE;
+	  #QwAlarm.%X6  := #QERR_EXT;
+	  #QwAlarm.%X7  := #QERR;
+	  #QwAlarm.%X8  := #InputWarning_L;
+	  #QwAlarm.%X9  := #InputWarning_H;
+	  #QwAlarm.%X10 := NOT #QPERIPH;
+	  #QwAlarm.%X11 := #QPERIPH;
+	  #QwAlarm.%X12 := NOT #QREMOTE;
+	  #QwAlarm.%X13 := #QREMOTE;
+	  #QwAlarm.%X14 := NOT #QMAN_AUT;
+	  #QwAlarm.%X15 := #QMAN_AUT;
+	
+	END_IF; // End normal case
+END_FUNCTION_BLOCK
+

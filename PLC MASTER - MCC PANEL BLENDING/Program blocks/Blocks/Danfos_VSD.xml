@@ -1,0 +1,1566 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Document>
+  <Engineering version="V17" />
+  <DocumentInfo>
+    <Created>2023-02-13T11:15:57.9574922Z</Created>
+    <ExportSetting>WithDefaults</ExportSetting>
+    <InstalledProducts>
+      <Product>
+        <DisplayName>Totally Integrated Automation Portal</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </Product>
+      <OptionPackage>
+        <DisplayName>TIA Portal Openness</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </OptionPackage>
+      <OptionPackage>
+        <DisplayName>TIA Portal Teamcenter Gateway</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </OptionPackage>
+      <OptionPackage>
+        <DisplayName>TIA Portal Version Control Interface</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </OptionPackage>
+      <Product>
+        <DisplayName>SINAMICS Startdrive Advanced</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </Product>
+      <OptionPackage>
+        <DisplayName>SINAMICS Startdrive G130, G150, S120, S150, SINAMICS MV, S210</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </OptionPackage>
+      <OptionPackage>
+        <DisplayName>SINAMICS Startdrive G110M, G120, G120C, G120D, G120P, G115D</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </OptionPackage>
+      <Product>
+        <DisplayName>STEP 7 Professional</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </Product>
+      <OptionPackage>
+        <DisplayName>STEP 7 Safety</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </OptionPackage>
+      <Product>
+        <DisplayName>WinCC Professional</DisplayName>
+        <DisplayVersion>V17</DisplayVersion>
+      </Product>
+    </InstalledProducts>
+  </DocumentInfo>
+  <SW.Blocks.FB ID="0">
+    <AttributeList>
+      <AutoNumber>false</AutoNumber>
+      <HeaderAuthor />
+      <HeaderFamily />
+      <HeaderName />
+      <HeaderVersion>0.1</HeaderVersion>
+      <Interface><Sections xmlns="http://www.siemens.com/automation/Openness/SW/Interface/v5">
+  <Section Name="Input">
+    <Member Name="In_CMD" Datatype="Bool" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">0 = Stop, 1 = Start</MultiLanguageText></Comment></Member>
+    <Member Name="Reset" Datatype="Bool" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute></AttributeList></Member>
+    <Member Name="QuickStop" Datatype="Bool" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">1 = Emergency stop</MultiLanguageText></Comment></Member>
+    <Member Name="drive_f_setpoint" Datatype="Real" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">Frequency setpoint in Hz; 0.00&lt;f_setl&lt;50.00Hz</MultiLanguageText></Comment></Member>
+    <Member Name="In_STW" Datatype="Word" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute></AttributeList></Member>
+    <Member Name="drive_AV" Datatype="Int" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">false</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">false</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">false</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">Drive Actual value</MultiLanguageText></Comment></Member>
+  </Section>
+  <Section Name="Output">
+    <Member Name="Danfos_CTW" Datatype="Word" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute></AttributeList></Member>
+    <Member Name="Danfos_SP" Datatype="Word" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">false</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">false</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">false</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">Drive Settpoint</MultiLanguageText></Comment></Member>
+    <Member Name="Drive_OK" Datatype="Bool" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute></AttributeList></Member>
+    <Member Name="Drive_Run" Datatype="Bool" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute></AttributeList></Member>
+    <Member Name="QAlarm" Datatype="Word" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute></AttributeList></Member>
+    <Member Name="Danfos_f_act" Datatype="Real" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">actual_frequency 0...50Hz</MultiLanguageText></Comment></Member>
+    <Member Name="Danfos_QAV_%" Datatype="Real" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">actual_frequency 0..100%</MultiLanguageText></Comment></Member>
+  </Section>
+  <Section Name="InOut" />
+  <Section Name="Static">
+    <Member Name="SW" Datatype="Struct" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Member Name="Bit 0-Control" Datatype="Bool"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">0 = Control not ready, 1 = Control ready</MultiLanguageText></Comment></Member><Member Name="Bit 1-Drive" Datatype="Bool"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">0 = Drive not ready, 1 = Drive ready</MultiLanguageText></Comment></Member><Member Name="Bit 2-Coasting stop" Datatype="Bool"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">0 = can't start the motor, 1 = can start the motor</MultiLanguageText></Comment></Member><Member Name="Bit 3-Trip" Datatype="Bool"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">0 = No error, 1 = Trip</MultiLanguageText></Comment></Member><Member Name="Bit 4-Error" Datatype="Bool"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">0 = No error, 1 = Drive Error (no Trip)</MultiLanguageText></Comment></Member><Member Name="Bit 5-NOP" Datatype="Bool"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList></Member><Member Name="Bit 6-triplock" Datatype="Bool"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">0 = not in fault, 1 = tripped and locked</MultiLanguageText></Comment></Member><Member Name="Bit 7-Warning" Datatype="Bool"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">0 = No warning , 1 = Warning</MultiLanguageText></Comment></Member><Member Name="Bit 8-Speed reference" Datatype="Bool"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">0 = Speed =/ reference, 1 = Speed = reference</MultiLanguageText></Comment></Member><Member Name="Bit 9-Operation" Datatype="Bool"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">0 = Local operation, 1 = bus control</MultiLanguageText></Comment></Member><Member Name="Bit 10-frequency range" Datatype="Bool"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">0 = Outside frequency range, 1 =Within frequency range</MultiLanguageText></Comment></Member><Member Name="Bit 11-Operation" Datatype="Bool"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">0 = No operation, 1 = In operation</MultiLanguageText></Comment></Member><Member Name="Bit 12-Drive OK" Datatype="Bool"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">0 = Drive OK, 1 = Stopped, autostart</MultiLanguageText></Comment></Member><Member Name="Bit 13-Voltage OK" Datatype="Bool"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">0 = Voltage OK, 1 = Voltage exceeded</MultiLanguageText></Comment></Member><Member Name="Bit 14-Torque OK" Datatype="Bool"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">0 = Torque OK, 1 = Torque exceeded</MultiLanguageText></Comment></Member><Member Name="Bit 15-Timers OK" Datatype="Bool"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList><Comment><MultiLanguageText Lang="en-US">0 = Timers OK, 1 = Timers exceeded</MultiLanguageText></Comment></Member></Member>
+    <Member Name="Reset_PE" Datatype="Bool" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList></Member>
+    <Member Name="Reset_Bits" Datatype="Bool" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList></Member>
+    <Member Name="f_act" Datatype="Real" Remanence="SetInIDB" Accessibility="Public"><AttributeList><BooleanAttribute Name="ExternalAccessible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalVisible" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="ExternalWritable" SystemDefined="true">true</BooleanAttribute><BooleanAttribute Name="SetPoint" SystemDefined="true">false</BooleanAttribute></AttributeList></Member>
+  </Section>
+  <Section Name="Temp" />
+  <Section Name="Constant" />
+</Sections></Interface>
+      <IsIECCheckEnabled>false</IsIECCheckEnabled>
+      <MemoryLayout>Standard</MemoryLayout>
+      <Name>Danfos_VSD</Name>
+      <Number>623</Number>
+      <ProgrammingLanguage>LAD</ProgrammingLanguage>
+      <SetENOAutomatically>false</SetENOAutomatically>
+      <UDABlockProperties />
+      <UDAEnableTagReadback>false</UDAEnableTagReadback>
+    </AttributeList>
+    <ObjectList>
+      <MultilingualText ID="1" CompositionName="Comment">
+        <ObjectList>
+          <MultilingualTextItem ID="2" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+          <MultilingualTextItem ID="3" CompositionName="Items">
+            <AttributeList>
+              <Culture>id-ID</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+      <SW.Blocks.CompileUnit ID="4" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><FlgNet xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/FlgNet/v4">
+  <Parts>
+    <Access Scope="LocalVariable" UId="21">
+      <Symbol>
+        <Component Name="Reset" />
+      </Symbol>
+    </Access>
+    <Access Scope="LocalVariable" UId="22">
+      <Symbol>
+        <Component Name="Reset_PE" />
+      </Symbol>
+    </Access>
+    <Access Scope="LocalVariable" UId="23">
+      <Symbol>
+        <Component Name="Reset_Bits" />
+      </Symbol>
+    </Access>
+    <Part Name="PContact" UId="24" />
+    <Part Name="Coil" UId="25" />
+  </Parts>
+  <Wires>
+    <Wire UId="26">
+      <Powerrail />
+      <NameCon UId="24" Name="pre" />
+    </Wire>
+    <Wire UId="27">
+      <IdentCon UId="22" />
+      <NameCon UId="24" Name="bit" />
+    </Wire>
+    <Wire UId="28">
+      <IdentCon UId="21" />
+      <NameCon UId="24" Name="operand" />
+    </Wire>
+    <Wire UId="29">
+      <NameCon UId="24" Name="out" />
+      <NameCon UId="25" Name="in" />
+    </Wire>
+    <Wire UId="30">
+      <IdentCon UId="23" />
+      <NameCon UId="25" Name="operand" />
+    </Wire>
+  </Wires>
+</FlgNet></NetworkSource>
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="5" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="6" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text>Bit Bit value=0 Bit value=1
+00 Reference value External selection lsb
+01 Reference value External selection msb
+02 DC brake Ramp
+03 Coasting No coasting
+04 Quick stop Ramp
+05 Hold output frequency Use ramp
+06 Ramp stop Start
+07 No function Reset
+08 No function Jog
+09 Ramp 1 Ramp 2
+10 Data invalid Data valid
+11 No function Relay 01 active
+12 No function Relay 04 active
+13 Parameter set-up selection lsb
+14 Parameter set-up selection msb
+15 No function Reverse</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="7" CompositionName="Items">
+                <AttributeList>
+                  <Culture>id-ID</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="8" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="9" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text>Reset</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="A" CompositionName="Items">
+                <AttributeList>
+                  <Culture>id-ID</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="B" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><StructuredText xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/StructuredText/v3">
+  <Access Scope="LocalVariable" UId="21">
+    <Symbol UId="22">
+      <Component Name="SW" UId="23" />
+      <Token Text="." UId="24" />
+      <Component Name="Bit 0-Control" UId="25" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="26" />
+  <Token Text=":=" UId="27" />
+  <Blank Num="1" UId="28" />
+  <Access Scope="LocalVariable" UId="29">
+    <Symbol UId="30">
+      <Component Name="In_STW" UId="31" />
+      <Token Text="." UId="32" />
+      <Token Text="%X0" UId="33" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="34" />
+  <NewLine Num="1" UId="35" />
+  <Access Scope="LocalVariable" UId="36">
+    <Symbol UId="37">
+      <Component Name="SW" UId="38" />
+      <Token Text="." UId="39" />
+      <Component Name="Bit 1-Drive" UId="40" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="41" />
+  <Token Text=":=" UId="42" />
+  <Blank Num="1" UId="43" />
+  <Access Scope="LocalVariable" UId="44">
+    <Symbol UId="45">
+      <Component Name="In_STW" UId="46" />
+      <Token Text="." UId="47" />
+      <Token Text="%X1" UId="48" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="49" />
+  <NewLine Num="1" UId="50" />
+  <Access Scope="LocalVariable" UId="51">
+    <Symbol UId="52">
+      <Component Name="SW" UId="53" />
+      <Token Text="." UId="54" />
+      <Component Name="Bit 2-Coasting stop" UId="55" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="56" />
+  <Token Text=":=" UId="57" />
+  <Blank Num="1" UId="58" />
+  <Access Scope="LocalVariable" UId="59">
+    <Symbol UId="60">
+      <Component Name="In_STW" UId="61" />
+      <Token Text="." UId="62" />
+      <Token Text="%X2" UId="63" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="64" />
+  <NewLine Num="1" UId="65" />
+  <Access Scope="LocalVariable" UId="66">
+    <Symbol UId="67">
+      <Component Name="SW" UId="68" />
+      <Token Text="." UId="69" />
+      <Component Name="Bit 3-Trip" UId="70" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="71" />
+  <Token Text=":=" UId="72" />
+  <Blank Num="1" UId="73" />
+  <Access Scope="LocalVariable" UId="74">
+    <Symbol UId="75">
+      <Component Name="In_STW" UId="76" />
+      <Token Text="." UId="77" />
+      <Token Text="%X3" UId="78" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="79" />
+  <NewLine Num="1" UId="80" />
+  <Access Scope="LocalVariable" UId="81">
+    <Symbol UId="82">
+      <Component Name="SW" UId="83" />
+      <Token Text="." UId="84" />
+      <Component Name="Bit 4-Error" UId="85" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="86" />
+  <Token Text=":=" UId="87" />
+  <Blank Num="1" UId="88" />
+  <Access Scope="LocalVariable" UId="89">
+    <Symbol UId="90">
+      <Component Name="In_STW" UId="91" />
+      <Token Text="." UId="92" />
+      <Token Text="%X4" UId="93" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="94" />
+  <NewLine Num="1" UId="95" />
+  <Access Scope="LocalVariable" UId="96">
+    <Symbol UId="97">
+      <Component Name="SW" UId="98" />
+      <Token Text="." UId="99" />
+      <Component Name="Bit 5-NOP" UId="100" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="101" />
+  <Token Text=":=" UId="102" />
+  <Blank Num="1" UId="103" />
+  <Access Scope="LocalVariable" UId="104">
+    <Symbol UId="105">
+      <Component Name="In_STW" UId="106" />
+      <Token Text="." UId="107" />
+      <Token Text="%X5" UId="108" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="109" />
+  <NewLine Num="1" UId="110" />
+  <Access Scope="LocalVariable" UId="111">
+    <Symbol UId="112">
+      <Component Name="SW" UId="113" />
+      <Token Text="." UId="114" />
+      <Component Name="Bit 6-triplock" UId="115" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="116" />
+  <Token Text=":=" UId="117" />
+  <Blank Num="1" UId="118" />
+  <Access Scope="LocalVariable" UId="119">
+    <Symbol UId="120">
+      <Component Name="In_STW" UId="121" />
+      <Token Text="." UId="122" />
+      <Token Text="%X6" UId="123" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="124" />
+  <NewLine Num="1" UId="125" />
+  <Access Scope="LocalVariable" UId="126">
+    <Symbol UId="127">
+      <Component Name="SW" UId="128" />
+      <Token Text="." UId="129" />
+      <Component Name="Bit 7-Warning" UId="130" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="131" />
+  <Token Text=":=" UId="132" />
+  <Blank Num="1" UId="133" />
+  <Access Scope="LocalVariable" UId="134">
+    <Symbol UId="135">
+      <Component Name="In_STW" UId="136" />
+      <Token Text="." UId="137" />
+      <Token Text="%X7" UId="138" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="139" />
+  <NewLine Num="1" UId="140" />
+  <Access Scope="LocalVariable" UId="141">
+    <Symbol UId="142">
+      <Component Name="SW" UId="143" />
+      <Token Text="." UId="144" />
+      <Component Name="Bit 8-Speed reference" UId="145" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="146" />
+  <Token Text=":=" UId="147" />
+  <Blank Num="1" UId="148" />
+  <Access Scope="LocalVariable" UId="149">
+    <Symbol UId="150">
+      <Component Name="In_STW" UId="151" />
+      <Token Text="." UId="152" />
+      <Token Text="%X8" UId="153" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="154" />
+  <NewLine Num="1" UId="155" />
+  <Access Scope="LocalVariable" UId="156">
+    <Symbol UId="157">
+      <Component Name="SW" UId="158" />
+      <Token Text="." UId="159" />
+      <Component Name="Bit 9-Operation" UId="160" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="161" />
+  <Token Text=":=" UId="162" />
+  <Blank Num="1" UId="163" />
+  <Access Scope="LocalVariable" UId="164">
+    <Symbol UId="165">
+      <Component Name="In_STW" UId="166" />
+      <Token Text="." UId="167" />
+      <Token Text="%X9" UId="168" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="169" />
+  <NewLine Num="1" UId="170" />
+  <Access Scope="LocalVariable" UId="171">
+    <Symbol UId="172">
+      <Component Name="SW" UId="173" />
+      <Token Text="." UId="174" />
+      <Component Name="Bit 10-frequency range" UId="175" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="176" />
+  <Token Text=":=" UId="177" />
+  <Blank Num="1" UId="178" />
+  <Access Scope="LocalVariable" UId="179">
+    <Symbol UId="180">
+      <Component Name="In_STW" UId="181" />
+      <Token Text="." UId="182" />
+      <Token Text="%X10" UId="183" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="184" />
+  <NewLine Num="1" UId="185" />
+  <Access Scope="LocalVariable" UId="186">
+    <Symbol UId="187">
+      <Component Name="SW" UId="188" />
+      <Token Text="." UId="189" />
+      <Component Name="Bit 11-Operation" UId="190" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="191" />
+  <Token Text=":=" UId="192" />
+  <Blank Num="1" UId="193" />
+  <Access Scope="LocalVariable" UId="194">
+    <Symbol UId="195">
+      <Component Name="In_STW" UId="196" />
+      <Token Text="." UId="197" />
+      <Token Text="%X11" UId="198" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="199" />
+  <NewLine Num="1" UId="200" />
+  <Access Scope="LocalVariable" UId="201">
+    <Symbol UId="202">
+      <Component Name="SW" UId="203" />
+      <Token Text="." UId="204" />
+      <Component Name="Bit 12-Drive OK" UId="205" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="206" />
+  <Token Text=":=" UId="207" />
+  <Blank Num="1" UId="208" />
+  <Access Scope="LocalVariable" UId="209">
+    <Symbol UId="210">
+      <Component Name="In_STW" UId="211" />
+      <Token Text="." UId="212" />
+      <Token Text="%X12" UId="213" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="214" />
+  <NewLine Num="1" UId="215" />
+  <Access Scope="LocalVariable" UId="216">
+    <Symbol UId="217">
+      <Component Name="SW" UId="218" />
+      <Token Text="." UId="219" />
+      <Component Name="Bit 13-Voltage OK" UId="220" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="221" />
+  <Token Text=":=" UId="222" />
+  <Blank Num="1" UId="223" />
+  <Access Scope="LocalVariable" UId="224">
+    <Symbol UId="225">
+      <Component Name="In_STW" UId="226" />
+      <Token Text="." UId="227" />
+      <Token Text="%X13" UId="228" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="229" />
+  <NewLine Num="1" UId="230" />
+  <Access Scope="LocalVariable" UId="231">
+    <Symbol UId="232">
+      <Component Name="SW" UId="233" />
+      <Token Text="." UId="234" />
+      <Component Name="Bit 14-Torque OK" UId="235" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="236" />
+  <Token Text=":=" UId="237" />
+  <Blank Num="1" UId="238" />
+  <Access Scope="LocalVariable" UId="239">
+    <Symbol UId="240">
+      <Component Name="In_STW" UId="241" />
+      <Token Text="." UId="242" />
+      <Token Text="%X14" UId="243" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="244" />
+  <NewLine Num="1" UId="245" />
+  <Access Scope="LocalVariable" UId="246">
+    <Symbol UId="247">
+      <Component Name="SW" UId="248" />
+      <Token Text="." UId="249" />
+      <Component Name="Bit 15-Timers OK" UId="250" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="251" />
+  <Token Text=":=" UId="252" />
+  <Blank Num="1" UId="253" />
+  <Access Scope="LocalVariable" UId="254">
+    <Symbol UId="255">
+      <Component Name="In_STW" UId="256" />
+      <Token Text="." UId="257" />
+      <Token Text="%X15" UId="258" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="259" />
+</StructuredText></NetworkSource>
+          <ProgrammingLanguage>SCL</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="C" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="D" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="E" CompositionName="Items">
+                <AttributeList>
+                  <Culture>id-ID</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="F" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="10" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text>Read Status Word</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="11" CompositionName="Items">
+                <AttributeList>
+                  <Culture>id-ID</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="12" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><StructuredText xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/StructuredText/v3">
+  <Access Scope="LocalVariable" UId="21">
+    <Symbol UId="22">
+      <Component Name="Drive_Run" UId="23" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="24" />
+  <Token Text=":=" UId="25" />
+  <Blank Num="1" UId="26" />
+  <Access Scope="LocalVariable" UId="27">
+    <Symbol UId="28">
+      <Component Name="SW" UId="29" />
+      <Token Text="." UId="30" />
+      <Component Name="Bit 11-Operation" UId="31" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="32" />
+  <Token Text="=" UId="33" />
+  <Blank Num="1" UId="34" />
+  <Access Scope="LiteralConstant" UId="35">
+    <Constant UId="36">
+      <ConstantValue UId="38">true</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=";" UId="39" />
+  <NewLine Num="2" UId="40" />
+  <Access Scope="LocalVariable" UId="41">
+    <Symbol UId="42">
+      <Component Name="Drive_OK" UId="43" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="44" />
+  <Token Text=":=" UId="45" />
+  <Blank Num="1" UId="46" />
+  <Token Text="(" UId="47" />
+  <Access Scope="LocalVariable" UId="48">
+    <Symbol UId="49">
+      <Component Name="SW" UId="50" />
+      <Token Text="." UId="51" />
+      <Component Name="Bit 0-Control" UId="52" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="53" />
+  <Token Text="=" UId="54" />
+  <Blank Num="1" UId="55" />
+  <Access Scope="LiteralConstant" UId="56">
+    <Constant UId="57">
+      <ConstantValue UId="59">true</ConstantValue>
+    </Constant>
+  </Access>
+  <Blank Num="1" UId="60" />
+  <Token Text="AND" UId="61" />
+  <NewLine Num="1" UId="62" />
+  <Blank Num="14" UId="63" />
+  <Access Scope="LocalVariable" UId="64">
+    <Symbol UId="65">
+      <Component Name="SW" UId="66" />
+      <Token Text="." UId="67" />
+      <Component Name="Bit 1-Drive" UId="68" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="69" />
+  <Token Text="=" UId="70" />
+  <Blank Num="1" UId="71" />
+  <Access Scope="LiteralConstant" UId="72">
+    <Constant UId="73">
+      <ConstantValue UId="75">true</ConstantValue>
+    </Constant>
+  </Access>
+  <Blank Num="1" UId="76" />
+  <Token Text=")" UId="77" />
+  <Blank Num="1" UId="78" />
+  <Token Text="OR" UId="79" />
+  <NewLine Num="1" UId="80" />
+  <Blank Num="14" UId="81" />
+  <Token Text="(" UId="82" />
+  <Access Scope="LocalVariable" UId="83">
+    <Symbol UId="84">
+      <Component Name="SW" UId="85" />
+      <Token Text="." UId="86" />
+      <Component Name="Bit 2-Coasting stop" UId="87" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="88" />
+  <Token Text="=" UId="89" />
+  <Blank Num="1" UId="90" />
+  <Access Scope="LiteralConstant" UId="91">
+    <Constant UId="92">
+      <ConstantValue UId="94">true</ConstantValue>
+    </Constant>
+  </Access>
+  <Blank Num="1" UId="95" />
+  <Token Text="AND" UId="96" />
+  <NewLine Num="1" UId="97" />
+  <Blank Num="14" UId="98" />
+  <Access Scope="LocalVariable" UId="99">
+    <Symbol UId="100">
+      <Component Name="SW" UId="101" />
+      <Token Text="." UId="102" />
+      <Component Name="Bit 3-Trip" UId="103" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="104" />
+  <Token Text="=" UId="105" />
+  <Blank Num="1" UId="106" />
+  <Access Scope="LiteralConstant" UId="107">
+    <Constant UId="108">
+      <ConstantValue UId="110">false</ConstantValue>
+    </Constant>
+  </Access>
+  <Blank Num="1" UId="111" />
+  <Token Text="AND" UId="112" />
+  <NewLine Num="1" UId="113" />
+  <Blank Num="14" UId="114" />
+  <Access Scope="LocalVariable" UId="115">
+    <Symbol UId="116">
+      <Component Name="SW" UId="117" />
+      <Token Text="." UId="118" />
+      <Component Name="Bit 4-Error" UId="119" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="120" />
+  <Token Text="=" UId="121" />
+  <Blank Num="1" UId="122" />
+  <Access Scope="LiteralConstant" UId="123">
+    <Constant UId="124">
+      <ConstantValue UId="126">false</ConstantValue>
+    </Constant>
+  </Access>
+  <Blank Num="1" UId="127" />
+  <Token Text="AND" UId="128" />
+  <NewLine Num="1" UId="129" />
+  <Blank Num="14" UId="130" />
+  <Access Scope="LocalVariable" UId="131">
+    <Symbol UId="132">
+      <Component Name="SW" UId="133" />
+      <Token Text="." UId="134" />
+      <Component Name="Bit 6-triplock" UId="135" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="136" />
+  <Token Text="=" UId="137" />
+  <Blank Num="1" UId="138" />
+  <Access Scope="LiteralConstant" UId="139">
+    <Constant UId="140">
+      <ConstantValue UId="142">false</ConstantValue>
+    </Constant>
+  </Access>
+  <Blank Num="1" UId="143" />
+  <Token Text="AND" UId="144" />
+  <NewLine Num="1" UId="145" />
+  <Blank Num="14" UId="146" />
+  <Access Scope="LocalVariable" UId="147">
+    <Symbol UId="148">
+      <Component Name="SW" UId="149" />
+      <Token Text="." UId="150" />
+      <Component Name="Bit 7-Warning" UId="151" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="152" />
+  <Token Text="=" UId="153" />
+  <Blank Num="1" UId="154" />
+  <Access Scope="LiteralConstant" UId="155">
+    <Constant UId="156">
+      <ConstantValue UId="158">false</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=")" UId="159" />
+  <Token Text=";" UId="160" />
+  <NewLine Num="1" UId="161" />
+  <Blank Num="12" UId="162" />
+</StructuredText></NetworkSource>
+          <ProgrammingLanguage>SCL</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="13" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="14" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="15" CompositionName="Items">
+                <AttributeList>
+                  <Culture>id-ID</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="16" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="17" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text>Drive Status</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="18" CompositionName="Items">
+                <AttributeList>
+                  <Culture>id-ID</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="19" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><FlgNet xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/FlgNet/v4">
+  <Parts>
+    <Access Scope="LiteralConstant" UId="21">
+      <Constant>
+        <ConstantType>Int</ConstantType>
+        <ConstantValue>0</ConstantValue>
+      </Constant>
+    </Access>
+    <Access Scope="LocalVariable" UId="22">
+      <Symbol>
+        <Component Name="drive_AV" />
+      </Symbol>
+    </Access>
+    <Access Scope="LiteralConstant" UId="23">
+      <Constant>
+        <ConstantType>Int</ConstantType>
+        <ConstantValue>16384</ConstantValue>
+      </Constant>
+    </Access>
+    <Access Scope="LocalVariable" UId="24">
+      <Symbol>
+        <Component Name="f_act" />
+      </Symbol>
+    </Access>
+    <Access Scope="LiteralConstant" UId="25">
+      <Constant>
+        <ConstantType>Real</ConstantType>
+        <ConstantValue>0.0</ConstantValue>
+      </Constant>
+    </Access>
+    <Access Scope="LocalVariable" UId="26">
+      <Symbol>
+        <Component Name="f_act" />
+      </Symbol>
+    </Access>
+    <Access Scope="LiteralConstant" UId="27">
+      <Constant>
+        <ConstantType>Real</ConstantType>
+        <ConstantValue>50.0</ConstantValue>
+      </Constant>
+    </Access>
+    <Access Scope="LocalVariable" UId="28">
+      <Symbol>
+        <Component Name="Danfos_f_act" />
+      </Symbol>
+    </Access>
+    <Access Scope="LiteralConstant" UId="29">
+      <Constant>
+        <ConstantType>Real</ConstantType>
+        <ConstantValue>0.0</ConstantValue>
+      </Constant>
+    </Access>
+    <Access Scope="LocalVariable" UId="30">
+      <Symbol>
+        <Component Name="f_act" />
+      </Symbol>
+    </Access>
+    <Access Scope="LiteralConstant" UId="31">
+      <Constant>
+        <ConstantType>Real</ConstantType>
+        <ConstantValue>100.0</ConstantValue>
+      </Constant>
+    </Access>
+    <Access Scope="LocalVariable" UId="32">
+      <Symbol>
+        <Component Name="Danfos_QAV_%" />
+      </Symbol>
+    </Access>
+    <Part Name="Normalize" UId="33" DisabledENO="true">
+      <TemplateValue Name="SrcType" Type="Type">Int</TemplateValue>
+      <TemplateValue Name="DestType" Type="Type">Real</TemplateValue>
+    </Part>
+    <Part Name="Scale_X" UId="34" DisabledENO="true">
+      <TemplateValue Name="SrcType" Type="Type">Real</TemplateValue>
+      <TemplateValue Name="DestType" Type="Type">Real</TemplateValue>
+    </Part>
+    <Part Name="Scale_X" UId="35" DisabledENO="true">
+      <TemplateValue Name="SrcType" Type="Type">Real</TemplateValue>
+      <TemplateValue Name="DestType" Type="Type">Real</TemplateValue>
+    </Part>
+  </Parts>
+  <Wires>
+    <Wire UId="36">
+      <Powerrail />
+      <NameCon UId="33" Name="en" />
+    </Wire>
+    <Wire UId="37">
+      <IdentCon UId="21" />
+      <NameCon UId="33" Name="min" />
+    </Wire>
+    <Wire UId="38">
+      <IdentCon UId="22" />
+      <NameCon UId="33" Name="value" />
+    </Wire>
+    <Wire UId="39">
+      <IdentCon UId="23" />
+      <NameCon UId="33" Name="max" />
+    </Wire>
+    <Wire UId="40">
+      <NameCon UId="33" Name="eno" />
+      <NameCon UId="34" Name="en" />
+      <NameCon UId="35" Name="en" />
+    </Wire>
+    <Wire UId="41">
+      <NameCon UId="33" Name="out" />
+      <IdentCon UId="24" />
+    </Wire>
+    <Wire UId="42">
+      <IdentCon UId="25" />
+      <NameCon UId="34" Name="min" />
+    </Wire>
+    <Wire UId="43">
+      <IdentCon UId="26" />
+      <NameCon UId="34" Name="value" />
+    </Wire>
+    <Wire UId="44">
+      <IdentCon UId="27" />
+      <NameCon UId="34" Name="max" />
+    </Wire>
+    <Wire UId="45">
+      <NameCon UId="34" Name="out" />
+      <IdentCon UId="28" />
+    </Wire>
+    <Wire UId="46">
+      <IdentCon UId="29" />
+      <NameCon UId="35" Name="min" />
+    </Wire>
+    <Wire UId="47">
+      <IdentCon UId="30" />
+      <NameCon UId="35" Name="value" />
+    </Wire>
+    <Wire UId="48">
+      <IdentCon UId="31" />
+      <NameCon UId="35" Name="max" />
+    </Wire>
+    <Wire UId="49">
+      <NameCon UId="35" Name="out" />
+      <IdentCon UId="32" />
+    </Wire>
+  </Wires>
+</FlgNet></NetworkSource>
+          <ProgrammingLanguage>LAD</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="1A" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="1B" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text>// PZD2 - speed actual value</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="1C" CompositionName="Items">
+                <AttributeList>
+                  <Culture>id-ID</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="1D" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="1E" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text>Read from Drive actual frequency </Text>
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="1F" CompositionName="Items">
+                <AttributeList>
+                  <Culture>id-ID</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="20" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><StructuredText xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/StructuredText/v3">
+  <Access Scope="LocalVariable" UId="21">
+    <Symbol UId="22">
+      <Component Name="Danfos_CTW" UId="23" />
+      <Token Text="." UId="24" />
+      <Token Text="%X0" UId="25" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="26" />
+  <Token Text=":=" UId="27" />
+  <Blank Num="1" UId="28" />
+  <Access Scope="LiteralConstant" UId="29">
+    <Constant UId="30">
+      <ConstantValue UId="32">false</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=";" UId="33" />
+  <NewLine Num="1" UId="34" />
+  <Access Scope="LocalVariable" UId="35">
+    <Symbol UId="36">
+      <Component Name="Danfos_CTW" UId="37" />
+      <Token Text="." UId="38" />
+      <Token Text="%X1" UId="39" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="40" />
+  <Token Text=":=" UId="41" />
+  <Blank Num="1" UId="42" />
+  <Access Scope="LiteralConstant" UId="43">
+    <Constant UId="44">
+      <ConstantValue UId="46">false</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=";" UId="47" />
+  <NewLine Num="1" UId="48" />
+  <Access Scope="LocalVariable" UId="49">
+    <Symbol UId="50">
+      <Component Name="Danfos_CTW" UId="51" />
+      <Token Text="." UId="52" />
+      <Token Text="%X2" UId="53" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="54" />
+  <Token Text=":=" UId="55" />
+  <Blank Num="1" UId="56" />
+  <Access Scope="LiteralConstant" UId="57">
+    <Constant UId="58">
+      <ConstantValue UId="60">true</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=";" UId="61" />
+  <NewLine Num="1" UId="62" />
+  <Access Scope="LocalVariable" UId="63">
+    <Symbol UId="64">
+      <Component Name="Danfos_CTW" UId="65" />
+      <Token Text="." UId="66" />
+      <Token Text="%X3" UId="67" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="68" />
+  <Token Text=":=" UId="69" />
+  <Blank Num="1" UId="70" />
+  <Access Scope="LiteralConstant" UId="71">
+    <Constant UId="72">
+      <ConstantValue UId="74">true</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=";" UId="75" />
+  <NewLine Num="1" UId="76" />
+  <Access Scope="LocalVariable" UId="77">
+    <Symbol UId="78">
+      <Component Name="Danfos_CTW" UId="79" />
+      <Token Text="." UId="80" />
+      <Token Text="%X4" UId="81" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="82" />
+  <Token Text=":=" UId="83" />
+  <Blank Num="1" UId="84" />
+  <Access Scope="LocalVariable" UId="85">
+    <Symbol UId="86">
+      <Component Name="QuickStop" UId="87" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="88" />
+  <Token Text="=" UId="89" />
+  <Blank Num="1" UId="90" />
+  <Access Scope="LiteralConstant" UId="91">
+    <Constant UId="92">
+      <ConstantValue UId="94">true</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=";" UId="95" />
+  <NewLine Num="1" UId="96" />
+  <Access Scope="LocalVariable" UId="97">
+    <Symbol UId="98">
+      <Component Name="Danfos_CTW" UId="99" />
+      <Token Text="." UId="100" />
+      <Token Text="%X5" UId="101" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="102" />
+  <Token Text=":=" UId="103" />
+  <Blank Num="1" UId="104" />
+  <Access Scope="LiteralConstant" UId="105">
+    <Constant UId="106">
+      <ConstantValue UId="108">true</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=";" UId="109" />
+  <NewLine Num="1" UId="110" />
+  <Access Scope="LocalVariable" UId="111">
+    <Symbol UId="112">
+      <Component Name="Danfos_CTW" UId="113" />
+      <Token Text="." UId="114" />
+      <Token Text="%X6" UId="115" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="116" />
+  <Token Text=":=" UId="117" />
+  <Blank Num="1" UId="118" />
+  <Token Text="(" UId="119" />
+  <Access Scope="LocalVariable" UId="120">
+    <Symbol UId="121">
+      <Component Name="Drive_OK" UId="122" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="123" />
+  <Token Text="=" UId="124" />
+  <Access Scope="LiteralConstant" UId="125">
+    <Constant UId="126">
+      <ConstantValue UId="128">true</ConstantValue>
+    </Constant>
+  </Access>
+  <Blank Num="1" UId="129" />
+  <Token Text="AND" UId="130" />
+  <Blank Num="1" UId="131" />
+  <Access Scope="LocalVariable" UId="132">
+    <Symbol UId="133">
+      <Component Name="In_CMD" UId="134" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="135" />
+  <Token Text="=" UId="136" />
+  <Access Scope="LiteralConstant" UId="137">
+    <Constant UId="138">
+      <ConstantValue UId="140">true</ConstantValue>
+    </Constant>
+  </Access>
+  <Blank Num="1" UId="141" />
+  <Token Text="AND" UId="142" />
+  <Blank Num="1" UId="143" />
+  <Access Scope="LocalVariable" UId="144">
+    <Symbol UId="145">
+      <Component Name="QuickStop" UId="146" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="147" />
+  <Token Text="=" UId="148" />
+  <Blank Num="1" UId="149" />
+  <Access Scope="LiteralConstant" UId="150">
+    <Constant UId="151">
+      <ConstantValue UId="153">true</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=")" UId="154" />
+  <Token Text=";" UId="155" />
+  <NewLine Num="1" UId="156" />
+  <Access Scope="LocalVariable" UId="157">
+    <Symbol UId="158">
+      <Component Name="Danfos_CTW" UId="159" />
+      <Token Text="." UId="160" />
+      <Token Text="%X7" UId="161" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="162" />
+  <Token Text=":=" UId="163" />
+  <Blank Num="1" UId="164" />
+  <Access Scope="LocalVariable" UId="165">
+    <Symbol UId="166">
+      <Component Name="Reset_Bits" UId="167" />
+    </Symbol>
+  </Access>
+  <Token Text=";" UId="168" />
+  <NewLine Num="1" UId="169" />
+  <Access Scope="LocalVariable" UId="170">
+    <Symbol UId="171">
+      <Component Name="Danfos_CTW" UId="172" />
+      <Token Text="." UId="173" />
+      <Token Text="%X8" UId="174" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="175" />
+  <Token Text=":=" UId="176" />
+  <Blank Num="1" UId="177" />
+  <Access Scope="LiteralConstant" UId="178">
+    <Constant UId="179">
+      <ConstantValue UId="181">false</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=";" UId="182" />
+  <NewLine Num="1" UId="183" />
+  <Access Scope="LocalVariable" UId="184">
+    <Symbol UId="185">
+      <Component Name="Danfos_CTW" UId="186" />
+      <Token Text="." UId="187" />
+      <Token Text="%X9" UId="188" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="189" />
+  <Token Text=":=" UId="190" />
+  <Blank Num="1" UId="191" />
+  <Access Scope="LiteralConstant" UId="192">
+    <Constant UId="193">
+      <ConstantValue UId="195">false</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=";" UId="196" />
+  <NewLine Num="1" UId="197" />
+  <Access Scope="LocalVariable" UId="198">
+    <Symbol UId="199">
+      <Component Name="Danfos_CTW" UId="200" />
+      <Token Text="." UId="201" />
+      <Token Text="%X10" UId="202" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="203" />
+  <Token Text=":=" UId="204" />
+  <Blank Num="1" UId="205" />
+  <Access Scope="LiteralConstant" UId="206">
+    <Constant UId="207">
+      <ConstantValue UId="209">true</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=";" UId="210" />
+  <NewLine Num="1" UId="211" />
+  <Access Scope="LocalVariable" UId="212">
+    <Symbol UId="213">
+      <Component Name="Danfos_CTW" UId="214" />
+      <Token Text="." UId="215" />
+      <Token Text="%X11" UId="216" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="217" />
+  <Token Text=":=" UId="218" />
+  <Blank Num="1" UId="219" />
+  <Access Scope="LiteralConstant" UId="220">
+    <Constant UId="221">
+      <ConstantValue UId="223">false</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=";" UId="224" />
+  <NewLine Num="1" UId="225" />
+  <Access Scope="LocalVariable" UId="226">
+    <Symbol UId="227">
+      <Component Name="Danfos_CTW" UId="228" />
+      <Token Text="." UId="229" />
+      <Token Text="%X12" UId="230" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="231" />
+  <Token Text=":=" UId="232" />
+  <Blank Num="1" UId="233" />
+  <Access Scope="LiteralConstant" UId="234">
+    <Constant UId="235">
+      <ConstantValue UId="237">false</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=";" UId="238" />
+  <NewLine Num="1" UId="239" />
+  <Access Scope="LocalVariable" UId="240">
+    <Symbol UId="241">
+      <Component Name="Danfos_CTW" UId="242" />
+      <Token Text="." UId="243" />
+      <Token Text="%X13" UId="244" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="245" />
+  <Token Text=":=" UId="246" />
+  <Blank Num="1" UId="247" />
+  <Access Scope="LiteralConstant" UId="248">
+    <Constant UId="249">
+      <ConstantValue UId="251">false</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=";" UId="252" />
+  <NewLine Num="1" UId="253" />
+  <Access Scope="LocalVariable" UId="254">
+    <Symbol UId="255">
+      <Component Name="Danfos_CTW" UId="256" />
+      <Token Text="." UId="257" />
+      <Token Text="%X14" UId="258" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="259" />
+  <Token Text=":=" UId="260" />
+  <Blank Num="1" UId="261" />
+  <Access Scope="LiteralConstant" UId="262">
+    <Constant UId="263">
+      <ConstantValue UId="265">false</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=";" UId="266" />
+  <NewLine Num="1" UId="267" />
+  <Access Scope="LocalVariable" UId="268">
+    <Symbol UId="269">
+      <Component Name="Danfos_CTW" UId="270" />
+      <Token Text="." UId="271" />
+      <Token Text="%X15" UId="272" />
+    </Symbol>
+  </Access>
+  <Blank Num="1" UId="273" />
+  <Token Text=":=" UId="274" />
+  <Blank Num="1" UId="275" />
+  <Access Scope="LiteralConstant" UId="276">
+    <Constant UId="277">
+      <ConstantValue UId="279">false</ConstantValue>
+    </Constant>
+  </Access>
+  <Token Text=";" UId="280" />
+</StructuredText></NetworkSource>
+          <ProgrammingLanguage>SCL</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="21" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="22" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="23" CompositionName="Items">
+                <AttributeList>
+                  <Culture>id-ID</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="24" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="25" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text>Write to Drive Control  Word</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="26" CompositionName="Items">
+                <AttributeList>
+                  <Culture>id-ID</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <SW.Blocks.CompileUnit ID="27" CompositionName="CompileUnits">
+        <AttributeList>
+          <NetworkSource><StatementList xmlns="http://www.siemens.com/automation/Openness/SW/NetworkSource/StatementList/v4">
+  <StlStatement UId="101">
+    <LineComment Inserted="false">
+      <Text> PZD2 - speed setpoint</Text>
+    </LineComment>
+    <StlToken Text="COMMENT" />
+  </StlStatement>
+  <StlStatement UId="103">
+    <LineComment Inserted="false">
+      <Text> Valid speed setpoint between 0.00-50.00 Hz</Text>
+    </LineComment>
+    <StlToken Text="COMMENT" />
+  </StlStatement>
+  <StlStatement UId="105">
+    <StlToken Text="EMPTY_LINE" />
+  </StlStatement>
+  <StlStatement UId="106">
+    <StlToken Text="L" />
+    <Access Scope="LocalVariable">
+      <Symbol>
+        <Component Name="drive_f_setpoint" />
+      </Symbol>
+      <LineComment Inserted="false">
+        <Text> Load the frequency setpoint [Hz] </Text>
+      </LineComment>
+    </Access>
+  </StlStatement>
+  <StlStatement UId="109">
+    <StlToken Text="L" />
+    <Access Scope="LiteralConstant">
+      <Constant>
+        <ConstantType>Real</ConstantType>
+        <ConstantValue>0.0</ConstantValue>
+      </Constant>
+      <LineComment Inserted="false">
+        <Text> Load the value 0</Text>
+      </LineComment>
+    </Access>
+  </StlStatement>
+  <StlStatement UId="112">
+    <StlToken Text="LT_R" />
+    <LineComment Inserted="false">
+      <Text> Compare the speed setpoint with 0 (Hz): &lt; 0 Hz ?</Text>
+    </LineComment>
+  </StlStatement>
+  <StlStatement UId="114">
+    <StlToken Text="JC" />
+    <Access Scope="Label">
+      <Label Name="N004" />
+      <LineComment Inserted="false">
+        <Text> Yes: Jump to mark N004; No: Continue program run</Text>
+      </LineComment>
+    </Access>
+  </StlStatement>
+  <StlStatement UId="117">
+    <StlToken Text="EMPTY_LINE" />
+  </StlStatement>
+  <StlStatement UId="118">
+    <StlToken Text="L" />
+    <Access Scope="LocalVariable">
+      <Symbol>
+        <Component Name="drive_f_setpoint" />
+      </Symbol>
+      <LineComment Inserted="false">
+        <Text> Load the frequency setpoint [Hz]</Text>
+      </LineComment>
+    </Access>
+  </StlStatement>
+  <StlStatement UId="121">
+    <StlToken Text="L" />
+    <Access Scope="LiteralConstant">
+      <Constant>
+        <ConstantType>Real</ConstantType>
+        <ConstantValue>50.0</ConstantValue>
+      </Constant>
+      <LineComment Inserted="false">
+        <Text> Load the value 50</Text>
+      </LineComment>
+    </Access>
+  </StlStatement>
+  <StlStatement UId="124">
+    <StlToken Text="GT_R" />
+    <LineComment Inserted="false">
+      <Text> Compare the speed setpoint with 50 (Hz): &gt; 50 Hz ?</Text>
+    </LineComment>
+  </StlStatement>
+  <StlStatement UId="126">
+    <StlToken Text="JC" />
+    <Access Scope="Label">
+      <Label Name="N004" />
+      <LineComment Inserted="false">
+        <Text> Yes: Jump to the mark N004; No: Continue program run</Text>
+      </LineComment>
+    </Access>
+  </StlStatement>
+  <StlStatement UId="129">
+    <StlToken Text="EMPTY_LINE" />
+  </StlStatement>
+  <StlStatement UId="130">
+    <StlToken Text="L" />
+    <Access Scope="LocalVariable">
+      <Symbol>
+        <Component Name="drive_f_setpoint" />
+      </Symbol>
+      <LineComment Inserted="false">
+        <Text> Load the frequency setpoint [Hz]</Text>
+      </LineComment>
+    </Access>
+  </StlStatement>
+  <StlStatement UId="133">
+    <StlToken Text="EMPTY_LINE" />
+  </StlStatement>
+  <StlStatement UId="134">
+    <LineComment Inserted="false">
+      <Text> Save 2 decimal places:</Text>
+    </LineComment>
+    <StlToken Text="COMMENT" />
+  </StlStatement>
+  <StlStatement UId="136">
+    <StlToken Text="L" />
+    <Access Scope="LiteralConstant">
+      <Constant>
+        <ConstantType>Real</ConstantType>
+        <ConstantValue>100.0</ConstantValue>
+      </Constant>
+      <LineComment Inserted="false">
+        <Text> Load the value 100 </Text>
+      </LineComment>
+    </Access>
+  </StlStatement>
+  <StlStatement UId="139">
+    <StlToken Text="MUL_R" />
+    <LineComment Inserted="false">
+      <Text> Multiply the values</Text>
+    </LineComment>
+  </StlStatement>
+  <StlStatement UId="141">
+    <StlToken Text="RND" />
+    <LineComment Inserted="false">
+      <Text> Round-off the value (floating point number) to an integer number</Text>
+    </LineComment>
+  </StlStatement>
+  <StlStatement UId="143">
+    <StlToken Text="L" />
+    <Access Scope="LiteralConstant">
+      <Constant>
+        <ConstantType>Int</ConstantType>
+        <ConstantValue>16384</ConstantValue>
+      </Constant>
+      <LineComment Inserted="false">
+        <Text> Load the value 16384 = 4000HEX = 50Hz</Text>
+      </LineComment>
+    </Access>
+  </StlStatement>
+  <StlStatement UId="146">
+    <StlToken Text="MUL_D" />
+    <LineComment Inserted="false">
+      <Text> Multiply the values</Text>
+    </LineComment>
+  </StlStatement>
+  <StlStatement UId="24">
+    <StlToken Text="L" />
+    <Access Scope="LiteralConstant">
+      <Constant>
+        <ConstantType>Int</ConstantType>
+        <ConstantValue>5000</ConstantValue>
+      </Constant>
+      <LineComment Inserted="false">
+        <Text> The load the value 5000</Text>
+      </LineComment>
+    </Access>
+  </StlStatement>
+  <StlStatement UId="151">
+    <StlToken Text="DIV_D" />
+    <LineComment Inserted="false">
+      <Text> Divide the contents of AKKU2 by the contents of AKKU1</Text>
+    </LineComment>
+  </StlStatement>
+  <StlStatement UId="21">
+    <StlToken Text="T" />
+    <Access Scope="LocalVariable">
+      <Symbol>
+        <Component Name="Danfos_SP" />
+      </Symbol>
+      <LineComment Inserted="false">
+        <Text> Transfer to the drive</Text>
+      </LineComment>
+    </Access>
+  </StlStatement>
+  <StlStatement UId="156">
+    <StlToken Text="EMPTY_LINE" />
+  </StlStatement>
+  <StlStatement UId="157">
+    <LabelDeclaration>
+      <Label Name="N004" />
+    </LabelDeclaration>
+    <StlToken Text="NOP_0" />
+    <LineComment Inserted="false">
+      <Text> Jump mark N004: No function</Text>
+    </LineComment>
+  </StlStatement>
+  <StlStatement UId="160">
+    <StlToken Text="EMPTY_LINE" />
+  </StlStatement>
+</StatementList></NetworkSource>
+          <ProgrammingLanguage>STL</ProgrammingLanguage>
+        </AttributeList>
+        <ObjectList>
+          <MultilingualText ID="28" CompositionName="Comment">
+            <ObjectList>
+              <MultilingualTextItem ID="29" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="2A" CompositionName="Items">
+                <AttributeList>
+                  <Culture>id-ID</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+          <MultilingualText ID="2B" CompositionName="Title">
+            <ObjectList>
+              <MultilingualTextItem ID="2C" CompositionName="Items">
+                <AttributeList>
+                  <Culture>en-US</Culture>
+                  <Text>Write to Drive Setpoint</Text>
+                </AttributeList>
+              </MultilingualTextItem>
+              <MultilingualTextItem ID="2D" CompositionName="Items">
+                <AttributeList>
+                  <Culture>id-ID</Culture>
+                  <Text />
+                </AttributeList>
+              </MultilingualTextItem>
+            </ObjectList>
+          </MultilingualText>
+        </ObjectList>
+      </SW.Blocks.CompileUnit>
+      <MultilingualText ID="2E" CompositionName="Title">
+        <ObjectList>
+          <MultilingualTextItem ID="2F" CompositionName="Items">
+            <AttributeList>
+              <Culture>en-US</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+          <MultilingualTextItem ID="30" CompositionName="Items">
+            <AttributeList>
+              <Culture>id-ID</Culture>
+              <Text />
+            </AttributeList>
+          </MultilingualTextItem>
+        </ObjectList>
+      </MultilingualText>
+    </ObjectList>
+  </SW.Blocks.FB>
+</Document>

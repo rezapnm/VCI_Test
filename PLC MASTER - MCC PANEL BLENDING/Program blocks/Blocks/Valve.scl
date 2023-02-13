@@ -1,0 +1,436 @@
+﻿FUNCTION_BLOCK "Valve"
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+   VAR_INPUT 
+      LOCK : Bool;   // 1 = Interlock active
+      ERR_EXTERN : Bool;   // 1 = External error arised
+      LIOP_SEL : Bool;   // 0 = Operator; 1 = Linking
+      L_AUT : Bool;   // 0 = Manual; 1 = Automatic
+      L_REMOTE : Bool;   // 0 = Local; 1 = Remote
+      L_SIM : Bool;   // 0 = Normal; 1 = Simulation
+      L_RESET : Bool;   // 1 = Reset error peripherie
+      AUT_OP : Bool;   // 1 = CMD OPEN Automatic
+      MAN_OP : Bool;   // 1 = CMD OPEN Manual
+      SIM_OP : Bool;   // 1 = CMD OPEN Simulation
+      FB_OPEN : Bool;   // 1 = Feedback valve OPEN
+      FB_CLOSE : Bool;   // 1 = Feedback valve CLOSED
+      L_MON : Bool;   // 1 = Monitoring OPEN
+      MON_T : Time := t#5s;   // Monitoring opening time in process mode
+      MON_T_CLOSE : Time := t#5s;   // Monitoring closing time in process mode
+      INSTANCE : String := 'Valve_001';   // Filter attribute for message view, also used for labelling
+      RESTART : Bool;   // 1 = Initialize FB at startup (first cycle of PLC)
+   END_VAR
+
+   VAR_OUTPUT 
+      QdwState : DWord;   // Status HMI
+      QwState : Int;   // Valve: 0 = Close; 1 = Opening; 2 = Open; 3 = Closing
+      QCLOSING : Bool;   // 1 = Closing
+      QCLOSE : Bool;   // 1 = Close
+      QOPENING : Bool;   // 1 = Opening
+      QOPEN : Bool;   // 1 = Open
+      QCMD_OP : Bool;   // 0 = Close; 1 = Open (automatic & manual mode)
+      QMON : Bool;   // 1 = Monitoring is ON
+      QMON_ERR : Bool;   // 1 = Monitoring errror
+      QMON_T : Time;   // Expierd opening time in process mode
+      QMON_T_CLOSE : Time;   // Expierd closing time in process mode
+      QMAN_AUT : Bool;   // 0 = Manual; 1 = Automatic
+      QREMOTE : Bool;   // 0 = Local; 1 = Remote
+      QSIM : Bool;   // 0 = Normal; 1 = Simulation
+      QLOCK : Bool;   // 1 = Interlock is active
+      QERR : Bool;   // 1 = Common error
+      QERR_EXT : Bool;   // 1 = External error
+      QwAlarm : Word;   // Bit alarm procedure
+   END_VAR
+
+   VAR_IN_OUT 
+      VISIBILITY : Byte;   // Bit 0: Tab1 of window; Bit 1: Tab2 of window; ... ; Bit 7: Minimize
+      OPdwCmd : DWord;   // Contorl word HMI
+   END_VAR
+
+   VAR 
+      OP_RESET : Bool;   // Reset errors
+      FB_SIM_OPEN : Bool;   // 1 = Feedback Valve is OPEN in simulation mode
+      FB_SIM_CLOSE : Bool;   // 1 = Feedback Valve is CLOSE in simulation mode
+      SIM_T : Time := t#5s;   // Monitoring opening time in simulation mode
+      QSIM_T : Time;   // Remaining opening time in simulation mode
+      SIM_T_CLOSE : Time := T#5s;   // Monitoring closing time in simulation mode
+      QSIM_T_CLOSE : Time;   // Remaining closing time in simulation mode
+      QCMD_SIM : Bool;   // 0 = Close; 1 = Open (simulation mode)
+      OP_VISIBILITY : Byte;   // Bit 0: Tab1 of window; Bit 1: Tab2 of window; ... ; Bit 7: Minimize
+      VISIBILITY_OLD : Byte;   // Save last status of VISIBILITY
+      SE_L_RESET_LINK : Bool;   // Signal edge for the reset input from linking
+      SE_L_RESET_LINK_COND : Bool;   // Condition of signal edge
+      SE_L_RESET_OP : Bool;   // Signal edge for the reset input from operator
+      TOPENING {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;   // Maximum opening time
+      TCLOSING {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+      TOPENING_SIM {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+      TCLOSING_SIM {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+   END_VAR
+
+   VAR_TEMP 
+      CON_ERR : Bool;   // Error in valve condition
+      MON_ERR_OPENING : Bool;   // Monitoring error for opening valve in process mode
+      MON_ERR_CLOSING : Bool;   // Monitoring error for closing valve in process mode
+      MON_SIM_OPENING : Bool;   // Monitoring error for opening valve in simulation mode
+      MON_SIM_CLOSING : Bool;   // Monitoring error for closing valve in simulation mode
+      FB_ERR : Bool;   // Feedback error in process mode
+   END_VAR
+
+
+BEGIN
+	(********************************
+	           Start up
+	*********************************)
+	IF #RESTART= true THEN
+	  // Restart case
+	  #QCMD_OP:= false;
+	  #QCLOSE:=true;
+	  #QOPENING:=false;
+	  #QOPEN:=false;
+	  #QCLOSING:=false;
+	  #VISIBILITY:=0;
+	  #OPdwCmd:=0;
+	ELSE
+	  // Normal case
+	  
+	 (******************************************
+	    Network 1: Operating mode: manual/automatic
+	    Vaiable: OPdwCmd  Bit:  16  =  Manual
+	    Vaiable: OPdwCmd  Bit:  17  =  Automatic
+	  *******************************************)
+	  IF (#LIOP_SEL=true AND #L_AUT=true) OR (#OPdwCmd.%X17=true AND #LIOP_SEL=false) THEN
+	    #QMAN_AUT:=true;
+	    #OPdwCmd.%X16:=false;
+	    #OPdwCmd.%X17:=false;
+	  ELSIF (#LIOP_SEL=true AND #L_AUT=false) OR (#OPdwCmd.%X16=true AND #LIOP_SEL=false) THEN
+	    #QMAN_AUT:= false;
+	    #OPdwCmd.%X16:=false;
+	    #OPdwCmd.%X17:=false;
+	  END_IF;
+	  
+	  (******************************************
+	    Network 2: Control mode: local/remote
+	    Vaiable: OPdwCmd  Bit:  18  =  Local
+	    Vaiable: OPdwCmd  Bit:  19  =  Remote
+	  *******************************************)
+	  IF (#LIOP_SEL=true AND #L_REMOTE=true) OR (#OPdwCmd.%X19=true AND #LIOP_SEL=false) THEN
+	    #QREMOTE:=true;
+	    #OPdwCmd.%X18:=false;
+	    #OPdwCmd.%X19:=false;
+	  ELSIF (#LIOP_SEL=true AND #L_REMOTE=false) OR (#OPdwCmd.%X18=true AND #LIOP_SEL=false) THEN
+	    #QREMOTE:= false;
+	    #OPdwCmd.%X18:=false;
+	    #OPdwCmd.%X19:=false;
+	  END_IF;
+	  
+	  (******************************************
+	    Network 3: Simulation On/Off
+	    Vaiable: OPdwCmd  Bit:  20  =  Process
+	    Vaiable: OPdwCmd  Bit:  21  =  Simulation
+	  *******************************************)
+	  IF (#LIOP_SEL=true AND #L_SIM=true) OR (#OPdwCmd.%X21=true AND #LIOP_SEL=false) THEN
+	    #QSIM:=true;
+	    #OPdwCmd.%X20:=false;
+	    #OPdwCmd.%X21:=false;
+	  ELSIF (#LIOP_SEL=true AND #L_SIM=false) OR (#OPdwCmd.%X20=true AND #LIOP_SEL=false) THEN
+	    #QSIM:= false;
+	    #OPdwCmd.%X20:=false;
+	    #OPdwCmd.%X21:=false;
+	  END_IF;
+	  
+	  (*************************************
+	    Network 4: Reset Operation
+	    Vaiable: OPdwCmd  Bit:  24  =  Reset
+	  **************************************)
+	  // Rising edge by linking
+	  IF #L_RESET=true AND #SE_L_RESET_LINK_COND=false THEN
+	    #SE_L_RESET_LINK:=true;
+	    #SE_L_RESET_LINK_COND:=true;
+	  ELSIF #L_RESET=true AND #SE_L_RESET_LINK_COND=true THEN
+	    #SE_L_RESET_LINK:=false;
+	  ELSE
+	    #SE_L_RESET_LINK_COND:=false;
+	  END_IF;
+	  // Rising edge by operator
+	  IF #OPdwCmd.%X24=true THEN
+	    #SE_L_RESET_OP:=true;
+	    #OPdwCmd.%X24:=false;
+	  ELSE
+	    #SE_L_RESET_OP:=false;
+	  END_IF;
+	  // Reset error
+	  #OP_RESET:=(#SE_L_RESET_LINK OR (#SE_L_RESET_OP AND NOT #LIOP_SEL)) AND NOT #LOCK;
+	  
+	  (**********************************************
+	    Network 5: Monitoring feedback ON/OFF
+	    Vaiable: OPdwCmd  Bit:  8  =  Monitoring ON
+	    Vaiable: OPdwCmd  Bit:  9  =  Monitoring OFF
+	  ***********************************************)
+	  IF (#LIOP_SEL=true AND #L_MON=false) OR (#OPdwCmd.%X9=true AND #LIOP_SEL=false)THEN
+	    #QMON:=false;
+	    #OPdwCmd.%X8:=false;
+	    #OPdwCmd.%X9:=false;
+	  ELSIF (#LIOP_SEL=true AND #L_MON=true) OR (#OPdwCmd.%X8=true AND #LIOP_SEL=false)THEN
+	    #QMON:=true;
+	    #OPdwCmd.%X8:=false;
+	    #OPdwCmd.%X9:=false;
+	  END_IF;
+	
+	  (**********************************************
+	    Network 6: OPEN/CLOSE Valve
+	    Vaiable: OPdwCmd  Bit:  0  =  OPEN Valve
+	    Vaiable: OPdwCmd  Bit:  1  =  CLOSE Valve
+	  ***********************************************)
+	  IF #QERR=false THEN
+	    // No errors occurs
+	    IF #QSIM=false THEN
+	     // Simulation mode is not active
+	      // Automatic/Manual mode
+	      IF #QMAN_AUT=true THEN
+	        // Automatic mode is active
+	        // OPEN/CLOSE valve by linking (AUT_OP)
+	        #QCMD_OP:=#AUT_OP;
+	      ELSE
+	       // Automatic mode is not active
+	        // Local/Remote mode
+	        IF #QREMOTE=false THEN
+	          // Local mode is active
+	          // OPEN/CLOSE valve by linking (MAN_OP)
+	          #QCMD_OP:=#MAN_OP AND NOT #QMAN_AUT;
+	          #OPdwCmd.%X0:=false;
+	          #OPdwCmd.%X1:=false;
+	        ELSE
+	         // Remote mode is active
+	          // Open valve by operator
+	          IF #OPdwCmd.%X1=true THEN
+	            #QCMD_OP:=true;
+	            #OPdwCmd.%X0:=false;
+	            #OPdwCmd.%X1:=false;
+	          END_IF;
+	          // Close valve by operator
+	          IF #OPdwCmd.%X0=true THEN
+	            #QCMD_OP:=false;
+	            #OPdwCmd.%X0:=false;
+	            #OPdwCmd.%X1:=false;
+	          END_IF;
+	        END_IF;
+	      END_IF;
+	    ELSE
+	      // Local/Remote mode
+	      IF #QREMOTE=false THEN
+	        // Local mode is active
+	          // OPEN/CLOSE valve by linking (SIM_OP)
+	          #QCMD_SIM:=#SIM_OP;
+	          #OPdwCmd.%X0:=false;
+	          #OPdwCmd.%X1:=false;
+	      ELSE
+	        // Remote mode is active
+	          // Open valve by operator
+	          IF #OPdwCmd.%X1=true THEN
+	            #QCMD_SIM:=true;
+	            #OPdwCmd.%X0:=false;
+	            #OPdwCmd.%X1:=false;
+	          END_IF;
+	          // Close valve by operator
+	          IF #OPdwCmd.%X0=true THEN
+	            #QCMD_SIM:=false;
+	            #OPdwCmd.%X0:=false;
+	            #OPdwCmd.%X1:=false;
+	          END_IF;        
+	        END_IF;    
+	    END_IF;  
+	  ELSE
+	    // Errors occurs
+	    #QCMD_OP:=false;
+	    #QCMD_SIM:=false;
+	  END_IF;
+	
+	  (****************************************
+	    Network 7: Control signal to the valve
+	  *****************************************)
+	  IF #QERR=false THEN
+	    // Close  valve
+	    IF (((#FB_CLOSE=true OR #QMON=false) AND #QSIM=false AND #QCMD_OP=false) OR
+	      ((#FB_SIM_CLOSE=true OR #QMON=false) AND #QSIM=true AND #QCMD_SIM=false)) AND #QCLOSING=true THEN
+	      #QCLOSE:=true;
+	      #QCLOSING:=false;
+	      #QOPEN:=false;
+	      #QOPENING:=false;
+	      #QwState := 0;
+	    END_IF;
+	    // Closing valve
+	    IF ((#QSIM=false AND #QCMD_OP=false) OR (#QSIM=true AND #QCMD_SIM=false)) AND (#QOPEN=true OR #QOPENING=true) THEN
+	      #QCLOSE:=false;
+	      #QCLOSING:=true;
+	      #QOPEN:=false;
+	      #QOPENING:=false;
+	      #QwState := 3;
+	    END_IF;
+	    // Open valve
+	    IF (((#FB_OPEN=true OR #QMON=false) AND #QSIM=false AND #QCMD_OP=true) OR
+	      ((#FB_SIM_OPEN=true OR #QMON=false) AND #QSIM=true AND #QCMD_SIM=true)) AND #QOPENING=true THEN    
+	    #QCLOSE:=false;
+	    #QCLOSING:=false;
+	    #QOPEN:=true;
+	    #QOPENING:=false;
+	    #QwState := 2;
+	    END_IF;
+	    // Opening valve
+	    IF ((#QSIM=false AND #QCMD_OP=true) OR (#QSIM=true AND #QCMD_SIM=true)) AND (#QCLOSE=true OR #QCLOSING=true) THEN
+	    #QCLOSE:=false;
+	    #QCLOSING:=false;
+	    #QOPEN:=false;
+	    #QOPENING:=true;
+	    #QwState := 1;
+	    END_IF;
+	  END_IF;
+	
+	  (*******************************************************************
+	    Network 8: Feedbacks for monitoring in process and simulation mode
+	  ********************************************************************)
+	  IF #QSIM=false AND #QMON=true  THEN
+	  // Feedback monitoring in process mode
+	    #TOPENING(IN:=#QOPENING,
+	               PT:=#MON_T,
+	               Q=>#MON_ERR_OPENING,
+	               ET=>#QMON_T);
+	     
+	    #TCLOSING(IN:=#QCLOSING,
+	              PT:=#MON_T_CLOSE,
+	              Q=>#MON_ERR_CLOSING,
+	              ET=>#QMON_T_CLOSE);
+	    // Feedback error
+	    #FB_ERR:= ((NOT #FB_OPEN OR #FB_CLOSE) AND #QOPEN) OR ((#FB_OPEN OR NOT #FB_CLOSE) AND #QCLOSE);
+	    IF #FB_ERR=true OR #MON_ERR_OPENING=true OR #MON_ERR_CLOSING=true THEN
+	      #QMON_ERR:=true;
+	    END_IF;
+	    
+	    
+	  ELSIF #QSIM=true AND #QMON=true THEN
+	    // Feedback monitoring in simulation mode
+	    #TOPENING_SIM(IN:=#QOPENING,
+	                  PT:=#SIM_T,
+	                  Q=>#MON_SIM_OPENING,
+	                  ET=>#QSIM_T);
+	    
+	    #TCLOSING_SIM(IN:=#QCLOSING,
+	                  PT:=#SIM_T_CLOSE,
+	                  Q=>#MON_SIM_CLOSING,
+	                  ET=>#QSIM_T_CLOSE);
+	    
+	    // Feedback for open in simulation mode
+	    IF #MON_SIM_CLOSING=true OR #QERR=true THEN
+	      #FB_SIM_OPEN:=false;
+	    ELSIF #MON_SIM_OPENING=true THEN
+	      #FB_SIM_OPEN:=true;
+	    END_IF;
+	     // Feedback for close in simulation mode
+	    #FB_SIM_CLOSE:=NOT #FB_SIM_OPEN;
+	  END_IF;
+	  
+	  (**********************************************
+	    Network 9: Check errors
+	  ***********************************************)
+	  // External error
+	  #QERR_EXT:=#ERR_EXTERN;  
+	  // Interlock error
+	  IF #LOCK=true AND ( #QOPEN=true OR #QOPENING=true) THEN
+	    #QLOCK:=true;
+	  END_IF;
+	  // Error in valve condition
+	  #CON_ERR:=NOT((#QCLOSE AND NOT #QCLOSING AND NOT #QOPENING AND NOT #QOPEN) OR
+	  (NOT #QCLOSE AND #QCLOSING AND NOT #QOPENING AND NOT #QOPEN) OR
+	  (NOT #QCLOSE AND NOT #QCLOSING AND  #QOPENING AND NOT #QOPEN) OR
+	  (NOT #QCLOSE AND NOT #QCLOSING AND NOT #QOPENING AND  #QOPEN));
+	
+	  (**********************************************
+	    Network 10: General error
+	  ***********************************************)
+	  #QERR:= #QERR_EXT OR #QMON_ERR OR #QLOCK OR #CON_ERR;
+	
+	  (**********************************************
+	    Network 11: If error then stop
+	  ***********************************************)
+	  IF #QERR=true THEN
+	    #QCLOSE:=true;
+	    #QCLOSING:=false;
+	    #QOPEN:=false;
+	    #QOPENING:=false;
+	    #QwState := 0;
+	  END_IF;
+	
+	  IF #OP_RESET=true THEN
+	    #QMON_ERR:=false;
+	    #QLOCK:=false;
+	  END_IF;
+	  
+	  // End normal case
+	END_IF;
+	
+	(****************************************************
+	  Network 1: Influence visibility of faceplate window
+	*****************************************************)
+	IF #OP_VISIBILITY<>#VISIBILITY_OLD THEN
+	  #VISIBILITY_OLD:=#OP_VISIBILITY;
+	  #VISIBILITY:=#OP_VISIBILITY;
+	ELSIF #VISIBILITY<>#VISIBILITY_OLD THEN
+	  #VISIBILITY_OLD:=#VISIBILITY;
+	  #OP_VISIBILITY:=#VISIBILITY;
+	END_IF;
+	(********************************
+	  Network 10: Set state for HMI
+	*********************************)
+	#QdwState.%X0:=#QCLOSE AND NOT #QERR;
+	#QdwState.%X1:=#QOPENING;
+	#QdwState.%X2:=#QOPEN;
+	#QdwState.%X3:=#QCLOSING;
+	#QdwState.%X4:=false;
+	#QdwState.%X5:=false;
+	#QdwState.%X6:=false;
+	#QdwState.%X7:=false;
+	#QdwState.%X8:=#QMON;
+	#QdwState.%X9:=#QMON_ERR;
+	#QdwState.%X10:=false;
+	#QdwState.%X11:=false;
+	#QdwState.%X12:=false;
+	#QdwState.%X13:=false;
+	#QdwState.%X14:=false;
+	#QdwState.%X15:=false;
+	#QdwState.%X16:=#QMAN_AUT;
+	#QdwState.%X17:=#QREMOTE;
+	#QdwState.%X18:=#QSIM;
+	#QdwState.%X19:=false;
+	#QdwState.%X20:=false;
+	#QdwState.%X21:=false;
+	#QdwState.%X22:=false;
+	#QdwState.%X23:=false;
+	#QdwState.%X24:=#QERR;
+	#QdwState.%X25:=#QERR_EXT;
+	#QdwState.%X26:=#QLOCK;
+	#QdwState.%X27:=#LOCK;
+	#QdwState.%X28:=false;
+	#QdwState.%X29:=false;
+	#QdwState.%X30:=false;
+	#QdwState.%X31:=false;
+	
+	(********************************
+	  Network 11: Bit alarm procedure
+	*********************************)
+	#QwAlarm.%X0:=#QMON_ERR;
+	#QwAlarm.%X1:=false;
+	#QwAlarm.%X2:=false;
+	#QwAlarm.%X3:=false;
+	#QwAlarm.%X4:=#QLOCK;
+	#QwAlarm.%X5:=false;
+	#QwAlarm.%X6:=#QERR_EXT;
+	#QwAlarm.%X7:=#QERR;
+	#QwAlarm.%X8:=#QCLOSE;
+	#QwAlarm.%X9:=#QOPENING;
+	#QwAlarm.%X10:=#QOPEN;
+	#QwAlarm.%X11:=#QCLOSING;
+	#QwAlarm.%X12:=#LOCK;
+	#QwAlarm.%X13:=#QREMOTE;
+	#QwAlarm.%X14:=#QMAN_AUT;
+	#QwAlarm.%X15:=#QSIM;
+END_FUNCTION_BLOCK
+

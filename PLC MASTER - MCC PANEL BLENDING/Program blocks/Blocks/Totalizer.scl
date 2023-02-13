@@ -1,0 +1,60 @@
+﻿FUNCTION_BLOCK "Totalizer"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      value : Real;
+      intervall : Time;
+      cycle : Time;
+      reset : Bool;
+   END_VAR
+
+   VAR_OUTPUT 
+      total : Real;
+   END_VAR
+
+   VAR 
+      statAccum : Real;
+   END_VAR
+
+   VAR_TEMP 
+      tempIntervall : Real;
+      tempCycle : Real;
+      tempIntervallDInt : DInt;
+      tempCycleDInt : DInt;
+   END_VAR
+
+
+BEGIN
+	//Ist der Signalzustand der Variable "Reset" gleich True, so werden die Variablen
+	//"Accum" und "Total" auf Null zurückgesetzt und es erfolgt keine Berechnung.
+	//Beim Signalzustand False erfolgt zunächst eine Datentypumwandlung nach Real der beiden
+	//Eingangsvariablen "Intervall" und "Cycle". Zuerst mit der Konvertierung von Time nach
+	//DInt und anschließend von DInt nach Real.
+	//Innerhalb eines Zyklus wird der Eingangswert der Variablen "Value" mit dem Wert der temporären Variablen
+	//"Cycle_real" multipliziert und mit dem Wert der temporären Variablen "Intervall_real" dividiert.
+	//Das Ergebnis wird anschließend in den Zwischenspeicher "Accum" abgelegt. Somit wird innerhalb eines jeden
+	//Zykluses das Zwischenergebnis im "Accum" um diesen Wert inkrementiert, welches auch in jedem Zyklus zur
+	//Ausgangsvariable "Total" transferiert wird.
+	//***************************************************************************
+	//If the signal status of the variable "Reset" is true, the variables "Accum" and "Total"
+	//are set to zero and there is no calculation.
+	//If the signal status is false, there is first a data type change to real of the two
+	//input variables "Intervall" and "Cycle. After conversion from Time to DInit and from DInt to Real.
+	//In a #Cycle the input #Value of the variable "Value" is multiplied by the #Value of the temporary variable
+	//"Cycle_real" and then divided by the #Value of the temporary variable "Intervall_real". The result is then
+	//stored in the buffer "Accum". This in one particular #Cycle the result in the "Accum" buffer is
+	//incremented this #Value, which is also transferred to the output variable "Total" in that #Cycle too.
+	
+	IF #reset = true THEN
+	    #statAccum := 0.000000e000; //Die Variablen werden zurückgesetzt.
+	    #total := 0.000000e000; //The variables will be set to zero.
+	ELSE
+	    #tempIntervallDInt := TIME_TO_DINT(#intervall);
+	    #tempIntervall := DINT_TO_REAL(#tempIntervallDInt);
+	    #tempCycleDInt := TIME_TO_DINT(#cycle);
+	    #tempCycle := DINT_TO_REAL(#tempCycleDInt);
+	    #statAccum := ((#value * #tempCycle) / #tempIntervall) + #statAccum;
+	    #total := #statAccum; //Kopiere Ergebnis nach #Total / Copy result to #Total.
+	END_IF;
+END_FUNCTION_BLOCK
+

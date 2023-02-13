@@ -1,0 +1,66 @@
+﻿FUNCTION_BLOCK "Sim_PT1"
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+   VAR_INPUT 
+      Reset : Bool;
+      Calc_Param : Bool;   // Übernimmt neue Parameter
+      Input : Real;   // Input signal
+      TM_LAG1 : Real := 1.0;   // Time Constant T1 [sek]
+      GAIN : Real := 1.0;   // Proportionalitätskonstante
+      Cycle : Real := 0.1;   // Tastzeit [sek]
+      Max_Out : Real := 100.0;   // maximale Streckenbegrenzung
+      AMB_TEM : Real;   // ambient temperature
+   END_VAR
+
+   VAR_OUTPUT 
+      Max_reached : Bool;   // Strecke in der positiven Begrenzung
+      Output : Real;   // Output signal
+   END_VAR
+
+   VAR 
+      r_f1 : Real;
+      r_e1 : Real;
+      overfirst : Bool;
+   END_VAR
+
+
+BEGIN
+	
+	//**********************************************************************
+	//  Simulation of a PT1-System
+	//             GAIN
+	//  F(p) = -----------
+	//          TM_LAG*p + 1
+	//  Call the simulation in a cyclic interrupt with
+	//  T_Tast at least = T1/10!
+	//**********************************************************************
+	//
+	IF #Calc_Param = True OR NOT #overfirst THEN
+	  #overfirst := 1;
+	  // Z-parameters For Laplace PT1-System
+	  #r_e1 := - EXP(- #Cycle / #TM_LAG1);
+	  #r_f1 := #GAIN * (1 + #r_e1);
+	END_IF;
+	
+	// Differencial Equation of PT1-System
+	//#Output := #Input*#r_f1 - #Output*#r_e1; // Original
+	#Output := (#Input - #AMB_TEM) * #r_f1 - (#Output - #AMB_TEM) * #r_e1 + #AMB_TEM;
+	
+	// min limit of acutating variable and max-signal
+	IF #Output > #Max_Out THEN
+	  #Output := #Max_Out;
+	  #Max_reached := True;
+	ELSE
+	  #Max_reached := False;
+	END_IF;
+	
+	IF #Reset THEN
+	  #Output := #AMB_TEM; //set output to AMB_TEM
+	  //#Output := 0; // Original
+	  
+	END_IF;
+	
+	
+	
+END_FUNCTION_BLOCK
+

@@ -1,0 +1,287 @@
+﻿FUNCTION_BLOCK "Digital_1"
+TITLE =  Digital
+{ S7_Optimized_Access := 'FALSE' }
+AUTHOR : RM
+FAMILY : MON
+VERSION : 0.1
+//Interface for a binary value  
+   VAR_INPUT 
+      LOCK : Bool;   // 1 = Inerlock active
+      ERR_EXTERN : Bool;   // 1 = External error arised
+      LIOP_SEL : Bool;   // 0 = Operator; 1 = Linking
+      L_SIM : Bool;   // 0 = Normal; 1 = Simulation
+      L_RESET : Bool;   // 1 = Reset error peripherie
+      INP : Bool;   // 1 = Digital input signal is ON
+      INP_NEG : Bool;   // 1 = Negation input signal is ACTIVE
+      INP_SIM : Bool;   // 1 = Digital simulation signal is ON
+      DELAY_TIME : Time := T#5S;   // Delay time of setting bit
+      DELAY_TIME_OFF : Time := T#5S;   // Delay time of resetting bit
+      INSTANCE : String[254] := 'Digital_001';   // Filter attribute for message view, also used for labelling
+      RESTART : Bool;   // 1 = Initialize FB at startup (first cycle fo PLC)
+   END_VAR
+
+   VAR_OUTPUT 
+      QdwState : DWord;   // Status HMI
+      QLOCK : Bool;   // 1 = Interlock is active
+      QSIM : Bool;   // 0 = Normal; 1 = Simulation
+      QON : Bool;   // 1 = On
+      QON_DELAY : Bool;   // 1 = On with delay
+      QOFF : Bool;   // 1 = Off
+      QOFF_DELAY : Bool;   // 1 = Off with delay
+      QOUT : Bool;   // 1 = On or 1 = Off with delay, DI Out with Time Delay
+      QDELAY_TIME : Time;   // Delay time for switching ON
+      QDELAY_TIME_OFF : Time;   // Delay time for switching OFF
+      QINP : Bool;   // 1 = Input signal including negation information
+      QERR : Bool;   // 1 = Common error
+      QERR_EXTERN : Bool;   // 1 = External error
+      QwAlarm : Word;   // Bit alarm producere
+   END_VAR
+
+   VAR_IN_OUT 
+      VISIBILITY : Byte;   // Bit 0: Tab1 of window; Bit 1: Tab2 of window; ... ; Bit 7: Minimize
+      OPdwCmd : DWord;   // Control word from HMI
+   END_VAR
+
+   VAR 
+      OP_RESET : Bool;   // Reset error
+      OP_VISIBILITY : Byte;   // Operator: Bit 0: Tab1 of window; Bit 1: Tab2 of window; ... ; Bit 7: Minimize
+      VISIBILITY_OLD : Byte;   // Save last status of VISIBILITY
+      DELAY_ON : Bool;   // Delay for switching ON required
+      DELAY_OFF : Bool;   // Delay for switching OFF required
+      SE_L_RESET_LINK : Bool;   // Signal edge for the reset input from linking
+      SE_L_RESET_LINK_COND : Bool;   // Condition of signal edge
+      SE_L_RESET_OP : Bool;   // Signal edge for the reset input from operator
+      T_ON {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+      T_OFF {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;   // Timer instance for turning off
+      OLD_SIG_COND : Bool;   // Condition of the old signal
+      SINP_SIM : Bool;   // Signal from operator in simulation mode
+   END_VAR
+
+   VAR_TEMP 
+      TIMER_ON : Bool;   // Timer signal ON
+      TIMER_OFF : Bool;   // Timer signal OFF
+   END_VAR
+
+
+BEGIN
+	
+	(*
+	Network 1: Start up
+	*)
+	IF #RESTART= true THEN
+	  #QON:= false;
+	  #QON_DELAY:=false;
+	  #QOFF:=true;
+	  #QOFF_DELAY:=false;
+	  #OPdwCmd:=0;
+	END_IF;
+	
+	(*
+	Network 2: Simulation On/Off
+	Vaiable: OPdwCmd  Bit:  20  =  Process
+	Vaiable: OPdwCmd  Bit:  21  =  Simulation
+	*)
+	IF (#LIOP_SEL=true AND #L_SIM=true) OR (#OPdwCmd.%X21=true AND #LIOP_SEL=false) THEN
+	  #QSIM:=true;
+	  #OPdwCmd.%X20:=false;
+	  #OPdwCmd.%X21:=false;
+	ELSIF (#LIOP_SEL=true AND #L_SIM=false) OR (#OPdwCmd.%X20=true AND #LIOP_SEL=false) THEN
+	  #QSIM:= false;
+	  #OPdwCmd.%X20:=false;
+	  #OPdwCmd.%X21:=false;
+	END_IF;
+	
+	(*
+	Network 3: Reset Operation
+	Vaiable: OPdwCmd  Bit:  24  =  Reset
+	*)
+	// Rising edge by linking
+	IF #L_RESET=true AND #SE_L_RESET_LINK_COND=false THEN
+	  #SE_L_RESET_LINK:=true;
+	  #SE_L_RESET_LINK_COND:=true;
+	ELSIF #L_RESET=true AND #SE_L_RESET_LINK_COND=true THEN
+	  #SE_L_RESET_LINK:=false;
+	ELSE
+	  #SE_L_RESET_LINK_COND:=false;
+	END_IF;
+	// Rising edge by operator
+	IF #OPdwCmd.%X24=true THEN
+	  #SE_L_RESET_OP:=true;
+	  #OPdwCmd.%X24:=false;
+	ELSE
+	  #SE_L_RESET_OP:=false;
+	END_IF;
+	// Reset error
+	#OP_RESET:=(#SE_L_RESET_LINK=TRUE) OR (#SE_L_RESET_OP AND NOT #LIOP_SEL);
+	
+	(*
+	Network 4: Create input signal
+	*)
+	#QINP:=#INP XOR #INP_NEG;
+	
+	(*
+	Network 6: Check errors
+	*)
+	#QERR_EXTERN:=#ERR_EXTERN;
+	// Check for interlock
+	IF #LOCK=true AND (#QON=true OR #QON_DELAY=true OR #QOFF_DELAY=true) THEN
+	  #QLOCK:=true;
+	ELSIF #OP_RESET=true THEN
+	  #QLOCK:=false;
+	END_IF;
+	// Check for general error
+	IF #QERR_EXTERN=true OR #QLOCK=true THEN
+	  #QERR:=true;
+	ELSIF #OP_RESET=true THEN
+	  #QERR:=false;
+	END_IF;
+	
+	(*
+	Network 7: TOGGLE Simulation Bit
+	*)
+	IF #OPdwCmd.%X4=true AND #QSIM=true THEN
+	  #SINP_SIM := NOT #SINP_SIM;
+	  #OPdwCmd.%X4:=false;
+	END_IF;
+	
+	(*
+	Network 8: Bumpless switch to simulation mode
+	*)
+	IF #QSIM=false THEN
+	    #INP_SIM := #QINP;  
+	END_IF;
+	
+	(*
+	Network 9: Evaluate for delays
+	*)
+	// Evaluate for ON delay
+	IF #DELAY_TIME<> t#1ms THEN
+	  #DELAY_ON:=true;
+	ELSE
+	  #DELAY_ON:=false; 
+	END_IF;
+	// Evaluate for OFF delay
+	IF #DELAY_TIME_OFF <> t#1ms THEN
+	  #DELAY_OFF:=true;
+	ELSE
+	  #DELAY_OFF:=false;
+	END_IF;
+	
+	(*
+	Network 10: Settting ON/OFF
+	*)
+	// Delay time for setting on
+	    #T_ON(IN:=#DELAY_ON AND #QON_DELAY,
+	           PT:=#DELAY_TIME,
+	           Q=>#TIMER_ON,
+	           ET=>#QDELAY_TIME);
+	// Delay time for setting off               
+	    #T_OFF(IN:=#DELAY_OFF AND #QOFF_DELAY ,
+	            PT:=#DELAY_TIME_OFF,
+	            Q=>#TIMER_OFF,
+	            ET=>#QDELAY_TIME_OFF);
+	
+	IF #QERR=false AND #LOCK=false THEN
+	  // Sets variable, for closing process in progress
+	  #QON_DELAY:=((NOT #QSIM AND #QINP) OR (#QSIM AND (#INP_SIM OR #SINP_SIM)))AND NOT #QON;
+	  // Sets variable, for opening process in progress
+	  #QOFF_DELAY:=((NOT #QSIM AND NOT #QINP) OR (#QSIM AND NOT (#INP_SIM OR #SINP_SIM)))AND NOT #QOFF;
+	
+	  // Sets variable, for ON/OFF   
+	  IF #TIMER_ON=true OR (#QINP=true AND #DELAY_ON=false) OR (#OLD_SIG_COND=true AND #QOFF_DELAY=false) THEN
+	    // On case
+	     #QON:=true;
+	     #QOFF:=false;
+	     #OLD_SIG_COND:=true;
+	   ELSIF #TIMER_OFF=true OR (#QINP=false AND #DELAY_OFF=false) OR (#OLD_SIG_COND=false AND #QON_DELAY=false) THEN
+	     // Off case
+	     #QON:=false;
+	     #QOFF:=true;
+	     #OLD_SIG_COND:=false;
+	   ELSE
+	     // switch ON <--> OFF case
+	     #QON:=false;
+	     #QOFF:=false;
+	   END_IF;
+	ELSE
+	   // Error case
+	     #QON_DELAY:=false;
+	     #QOFF_DELAY:=false;
+	     #QON:=false;
+	     #QOFF:=NOT #QERR;
+	     #OLD_SIG_COND:=false;
+	END_IF;
+	
+	(*
+	Network 11: QOUT
+	*)
+	#QOUT := #QON OR #QOFF_DELAY;
+	
+	(*
+	Network 12: Influence visibility of faceplate window
+	*)
+	IF #OP_VISIBILITY<>#VISIBILITY_OLD THEN
+	  #VISIBILITY_OLD:=#OP_VISIBILITY;
+	  #VISIBILITY:=#OP_VISIBILITY;
+	ELSIF #VISIBILITY<>#VISIBILITY_OLD THEN
+	  #VISIBILITY_OLD:=#VISIBILITY;
+	  #OP_VISIBILITY:=#VISIBILITY;
+	END_IF;
+	
+	(*
+	Network 13: Set state for HMI
+	*)
+	#QdwState.%X0:=#QOFF;
+	#QdwState.%X1:=#QOFF_DELAY;
+	#QdwState.%X2:=#QON;
+	#QdwState.%X3:=#QON_DELAY;
+	#QdwState.%X4:=false;
+	#QdwState.%X5:=false;
+	#QdwState.%X6:=false;
+	#QdwState.%X7:=false;
+	#QdwState.%X8:=#QINP;
+	#QdwState.%X9:=false;
+	#QdwState.%X10:=false;
+	#QdwState.%X11:=false;
+	#QdwState.%X12:=#INP_NEG;
+	#QdwState.%X13:=#SINP_SIM;
+	#QdwState.%X14:=false;
+	#QdwState.%X15:=false;
+	#QdwState.%X16:=false;
+	#QdwState.%X17:=false;
+	#QdwState.%X18:=#QSIM;
+	#QdwState.%X19:=false;
+	#QdwState.%X20:=false;
+	#QdwState.%X21:=false;
+	#QdwState.%X22:=false;
+	#QdwState.%X23:=false;
+	#QdwState.%X24:=#QERR;
+	#QdwState.%X25:=#QERR_EXTERN;
+	#QdwState.%X26:=#QLOCK;
+	#QdwState.%X27:=#LOCK;
+	#QdwState.%X28:=false;
+	#QdwState.%X29:=false;
+	#QdwState.%X30:=false;
+	#QdwState.%X31:=false;
+	
+	(*
+	Network 14: Bit alarm procedure
+	*)
+	#QwAlarm.%X0:=false;
+	#QwAlarm.%X1:=false;
+	#QwAlarm.%X2:=false;
+	#QwAlarm.%X3:=false;
+	#QwAlarm.%X4:=#QLOCK;
+	#QwAlarm.%X5:=false;
+	#QwAlarm.%X6:=#QERR_EXTERN;
+	#QwAlarm.%X7:=#QERR;
+	#QwAlarm.%X8:=#QON;
+	#QwAlarm.%X9:=#QON_DELAY;
+	#QwAlarm.%X10:=false;
+	#QwAlarm.%X11:=false;
+	#QwAlarm.%X12:=#LOCK;
+	#QwAlarm.%X13:=false;
+	#QwAlarm.%X14:=false;
+	#QwAlarm.%X15:=#QSIM;
+END_FUNCTION_BLOCK
+

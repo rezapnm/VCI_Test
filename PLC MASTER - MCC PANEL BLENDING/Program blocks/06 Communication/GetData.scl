@@ -1,0 +1,231 @@
+﻿FUNCTION_BLOCK "GetData"
+TITLE = S7 communication with PUT/GET
+{ S7_Optimized_Access := 'TRUE' }
+AUTHOR : SiemensIndustryOnlineSupport
+FAMILY : S7comm
+VERSION : 1.0
+//read data via S7 communication with "GET" instruction
+   VAR_INPUT 
+      execute : Bool;   //  Rising edge starts action once
+      connectionId : Word;
+   END_VAR
+
+   VAR_OUTPUT 
+      done { ExternalWritable := 'False'} : Bool;   //  TRUE: Commanded functionality has been completed successfully
+      busy { ExternalWritable := 'False'} : Bool;   //  TRUE: FB is not finished and new output values can be expected
+      error { ExternalWritable := 'False'} : Bool;   //  TRUE: An error occurred during the execution of the FB
+      status { ExternalWritable := 'False'} : Word := #STATUS_NO_CALL;   //  16#0000 - 16#7FFF: Status of the FB, 16#8000 - 16#FFFF: Error identification
+   END_VAR
+
+   VAR_IN_OUT 
+      ADDR_1 : Remote;
+      ADDR_2 : Remote;
+      ADDR_3 : Remote;
+      ADDR_4 : Remote;
+      RD_1 : Variant;
+      RD_2 : Variant;
+      RD_3 : Variant;
+      RD_4 : Variant;
+   END_VAR
+
+   VAR 
+      statExecuteOld { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   //  Old value of 'execute' input for edge detection
+      statDone { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   //  Static value for output 'done'
+      statBusy { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   //  Static value for output 'busy'
+      statError { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Bool;   //  Static value for output 'error'
+      statStatus { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : Word := #STATUS_NO_CALL;   //  Static value for output 'status'
+      statFBState { ExternalAccessible := 'False'; ExternalVisible := 'False'; ExternalWritable := 'False'} : DInt := #FB_STATE_NO_PROCESSING;   //  State in the state machine of the FB
+      instGet {InstructionName := 'GET'; LibVersion := '1.2'} : GET;
+      statErrorGet { S7_SetPoint := 'True'} : Bool;
+   END_VAR
+
+   VAR_TEMP 
+      tempExecute : Bool;   //  Temporary value for input 'execute'
+   END_VAR
+
+   VAR CONSTANT 
+      FB_STATE_NO_PROCESSING : DInt := 0;   //  FB state: No processing
+      FB_STATE_PROCESSING_1 : DInt := 1;   //  FB state: Processing 1
+      FB_STATE_PROCESSING_2 : DInt := 2;   //  FB state: Processing 2
+      STATUS_EXECUTION_FINISHED : Word := 16#0000;   //  Execution finished without errors
+      STATUS_NO_CALL : Word := 16#7000;   //  No job being currently processed
+      STATUS_FIRST_CALL : Word := 16#7001;   //  First call after incoming new job (rising edge 'execute')
+      STATUS_SUBSEQUENT_CALL : Word := 16#7002;   //  Subsequent call during active processing without further details
+      ERR_UNDEFINED_STATE : Word := 16#8600;   //  Error: due to an undefined state in state machine
+      ERR_IN_BLOCK_OPERATION : Word := 16#8001;   //  Error: Wrong operation of the function block
+      ERR_PARAMETRIZATION : Word := 16#8200;   //  Error: during parameterization
+      ERR_PROCESSING_EXTERN : Word := 16#8400;   //  Error: when processing from outside (e. g. wrong I/O signals, axis not referenced)
+      ERR_PROCESSING_INTERN : Word := 16#8600;   //  Error: when processing internally (e. g. when calling a system function)
+      ERR_AREA_RESERVED : Word := 16#8800;   //  Error: Reserved area
+      ERR_USER_DEFINED_CLASSES : Word := 16#9000;   //  Error: User-defined error classes
+   END_VAR
+
+
+BEGIN
+	REGION BLOCK INFO HEADER
+	  //===============================================================================
+	  // (company) / (c)Copyright (2020)
+	  //-------------------------------------------------------------------------------
+	  // Title:            (S7 communication with PUT/GET)
+	  // Comment/Function: (read data via S7 communication with "GET" instruction)
+	  // Library/Family:   (S7comm)
+	  // Author:           (SiemensIndustryOnlineSupport)
+	  // Tested with:      (V2.8)
+	  // Engineering:      TIA Portal (SW V16)
+	  // Restrictions:     (-)
+	  // Requirements:     (S7-1500 CPUs)
+	  //-------------------------------------------------------------------------------
+	  // Change log table:
+	  // Version  | Date       | Expert in charge       | Changes applied
+	  //----------|------------|------------------------|------------------------------
+	  // 01.00.00 | 2020-07-27 | (DI CS SD CSS KMT KD1) | First released version
+	  //===============================================================================
+	END_REGION
+	
+	#tempExecute := #execute; // Work with temporary value / create process image
+	
+	REGION TRIGGERING
+	  IF (#tempExecute = TRUE) AND (#statExecuteOld = FALSE) // Check if FB is triggered
+	    // TODO(optional): delete next line and comment line if FB shall finish current job before new job can be started with rising edge of execute
+	    AND (#statStatus = #STATUS_NO_CALL)
+	  THEN // First call; initialize FB
+	    #statDone := FALSE;
+	    #statBusy := TRUE;
+	    #statError := FALSE;
+	    #statStatus := #STATUS_FIRST_CALL;
+	    // State machine - start processing
+	    #statFBState := #FB_STATE_PROCESSING_1;
+	    
+	    // TODO: Initialize functionality: reset of variables, diagnostics, etc.
+	    
+	    // TODO: Initialize functionality: call subsidiary FBs with FALSE
+	    //      #instFB(execute := FALSE);
+	    
+	    #instGet.REQ := false;
+	    
+	  ELSIF (#statStatus = #STATUS_FIRST_CALL) THEN
+	    #statStatus := #STATUS_SUBSEQUENT_CALL;
+	  END_IF;
+	  
+	  // Edge detection 'execute' input
+	  #statExecuteOld := #tempExecute;
+	END_REGION TRIGGERING
+	
+	IF (#statStatus = #STATUS_NO_CALL) THEN // Nothing to do -> End here to reduce "system load"
+	  RETURN;
+	END_IF;
+	
+	REGION STATE_MACHINE
+	  CASE #statFBState OF // State machine of FB
+	    #FB_STATE_NO_PROCESSING:
+	      REGION NO Processing
+	        // No processing active (Note: this state must always be present and left empty)
+	        ;
+	      END_REGION NO Processing
+	      
+	    #FB_STATE_PROCESSING_1: // Processing active
+	      REGION processing 1
+	        // TODO: Use this state for application specific code
+	        // Call subsidiary FB or functionality
+	        //          #instFB(execute := TRUE);
+	        //          IF (#instFB.done = TRUE) THEN // Subsidiary FB finished successfully
+	        //            #statStatus := #STATUS_EXECUTION_FINISHED; // Or continue processing with next state e.g. #statFBState := FB_STATE_PROCESSING_2;
+	        //
+	        //          ELSIF (#instFB.error = TRUE) THEN // Error occurred in subsidiary FB
+	        //            // If the error occurred needs separate handling (e.g. close connection)
+	        //            // please set the error output only when this error handling completed successfully
+	        //            #statStatus := #ERR_XYZ; // Set correct status that identifies error clearly
+	        //            // TODO: Error handling
+	        //          END_IF;
+	        
+	          #instGet.REQ := true;
+	          
+	          IF #instGet.NDR = TRUE
+	          THEN
+	              #statStatus := #STATUS_EXECUTION_FINISHED;
+	              #instGet.REQ := false;
+	          ELSIF #instGet.ERROR = TRUE
+	          THEN
+	              #statErrorGet := true;
+	              #statStatus := #instGet.STATUS;
+	              #instGet.REQ := false;
+	          END_IF;
+	              
+	        
+	      END_REGION processing 1      
+	      
+	    #FB_STATE_PROCESSING_2: // Further processing state
+	      REGION processing 2
+	        // TODO: Use this state for further application specific code
+	        // 
+	        ;
+	      END_REGION processing 2
+	      
+	    ELSE // Undefined state in state machine reached
+	      REGION undefined state
+	        #statStatus := #ERR_UNDEFINED_STATE;
+	      END_REGION undefined state
+	  END_CASE;
+	END_REGION STATE_MACHINE
+	
+	REGION OUTPUTS
+	  // Write outputs
+	  IF (#statStatus = #STATUS_EXECUTION_FINISHED) AND (#statDone = FALSE) THEN // Execution finished without errors
+	    REGION execution finished
+	      #statDone := TRUE;
+	      #statBusy := FALSE;
+	      #statError := FALSE;
+	      // execution aborted --> set state no processing
+	      #statFBState := #FB_STATE_NO_PROCESSING;
+	    END_REGION execution finished
+	    
+	ELSIF ((#statStatus.%X15 = TRUE) OR (#statErrorGet=TRUE)) AND (#statError = FALSE) THEN // Error occurred (#statStatus is 16#8000 to 16#FFFF)
+	    REGION error occured
+	      #statDone := FALSE;
+	      #statBusy := FALSE;
+	      #statError := TRUE;
+	      // execution aborted --> set state no processing
+	      #statFBState := #FB_STATE_NO_PROCESSING;
+	    END_REGION error occured
+	    
+	  ELSIF (#tempExecute = FALSE) AND ((#statDone = TRUE) OR (#statError = TRUE)) THEN // Reset outputs
+	    REGION execute reseted
+	      #statDone := FALSE;
+	      #statBusy := FALSE;
+	      #statError := FALSE;
+	      #statErrorGet := false;
+	      #statStatus := #STATUS_NO_CALL;
+	      // TODO: Reset application specific outputs
+	      // 
+	    END_REGION execute reseted
+	END_IF;
+	
+	REGION call get instruction
+	    // Statement section REGION
+	#instGet(ID:=#connectionId,
+	         ADDR_1:=#ADDR_1,
+	         ADDR_2:=#ADDR_2,
+	         ADDR_3:=#ADDR_3,
+	         ADDR_4:=#ADDR_4,
+	         RD_1:=#RD_1,
+	         RD_2:=#RD_2,
+	         RD_3:=#RD_3,
+	         RD_4:=#RD_4);
+	
+	END_REGION
+	
+	
+	  REGION Write static values to outputs
+	    #done := #statDone;
+	    #busy := #statBusy;
+	    #error := #statError;
+	    #status := #statStatus;
+	    // if ENO mechanism is not used / not wanted replace the following line by --> ENO := TRUE;
+	    ENO := NOT #statError;
+	    // TODO: Write application specific static values to outputs
+	    // 
+	  END_REGION Write static values TO outputs
+	END_REGION OUTPUTS
+	
+END_FUNCTION_BLOCK
+

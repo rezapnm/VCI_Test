@@ -1,0 +1,611 @@
+﻿FUNCTION_BLOCK "Motor_w_VSD"
+TITLE = Motor
+{ S7_Optimized_Access := 'FALSE' }
+AUTHOR : IW
+VERSION : 0.1
+//Interface FB for a motor with Danfoss FC Profil
+   VAR_INPUT 
+      LOCK : Bool;   // 1 = Interlock active
+      ERR_EXTERN : Bool;   // 1 = External error arised
+      LIOP_SEL : Bool;   // 0 = Operator; 1 = Linking
+      L_AUT : Bool;   // 0 = Manual; 1 = Automatic
+      L_REMOTE : Bool;   // 0 = Local; 1 = Remote
+      L_SIM : Bool;   // 0 = Normal; 1 = Simulation
+      L_RESET : Bool;   // 1 = Reset error peripherie
+      AUT_ON : Bool;   // 1 = CMD ON Automatic
+      MAN_ON : Bool;   // 1 = CMD ON Manual
+      SIM_ON : Bool;   // 1 = CMD ON Simulation
+      FB_MODE : Bool;   // 0 = FB Run from communication ,1 = FB_ON
+      FB_ON : Bool;   // 1 = Feedback Motor ON
+      drive_reversing : Bool;
+      L_MON : Bool;   // 1 = Monitoring ON
+      MON_T : Time := t#5s;   // Monitoring starting time in process mode
+      MON_T_STOP : Time := t#5s;   // Monitoring stopping time in process mode
+      MPS : Bool;   // 1 = Motor protection switch ON
+      L_FLOW_MON : Bool;   // 1 = Monitoring flow
+      FLOW : Real;   // Current flow
+      FLOW_LL : Real := 5.0;   // Low level flow
+      FLOW_MT : Time := t#8s;   // Delay of monitoring lower flow
+      IN_SP_Speed : Real;   // Setpoint Speed in Percen
+      IN_SW : Word;   // IN Status word from Drive
+      "IN _AV" : Int;   // IN Actual Speed from Drive
+      IN_Volt : Int;   // IN Actual Voltage
+      IN_Ampere : Int;   // IN Actual Ampere
+      IN_KW : Int;   // IN Actual KW
+      IN_Nm : Int;   // IN Actual Torque
+      INSTANCE : String := 'Motor_001';   // Filter attribute for message view, also used for labelling
+      RESTART : Bool;   // 1 = Initialize FB at startup (first cycle of PLC)
+   END_VAR
+
+   VAR_OUTPUT 
+      QdwState : DWord;   // Status HMI
+      QwState : Int;   // Motor: 0 = Stop; 1 = Starting; 2 = Run; 3 = Stopping
+      QSTOPPING : Bool;   // 1 = Stopping
+      QSTOP : Bool;   // 1 = Stop
+      QSTARTING : Bool;   // 1 = Starting
+      QRUN : Bool;   // 1 = Run
+      QCMD_ON : Bool;   // 0 = Stop; 1 = Start (automatic & manual mode)
+      QMON : Bool;   // 1 = Monitoring is ON
+      QMON_ERR : Bool;   // 1 = Monitoring errror
+      QMON_T : Time;   // Expierd starting time in process mode
+      QMON_T_STOP : Time;   // Expierd stopping time in process mode
+      QFLOW_MON : Bool;   // 1 = Flow monitoring is ON
+      QFLOW_MT : Time;   // Expiered delay of monitoring lower flow
+      QFLOW_ERR : Bool;   // 1 = Error flow monitoring
+      QMPS : Bool;   // 1 = Motor protecting switch
+      QMAN_AUT : Bool;   // 0 = Manual; 1 = Automatic
+      QREMOTE : Bool;   // 0 = Local; 1 = Remote
+      QSIM : Bool;   // 0 = Normal; 1 = Simulation
+      QLOCK : Bool;   // 1 = Interlock is active
+      QERR : Bool;   // 1 = Common error
+      QERR_EXT : Bool;   // 1 = External error
+      QDrive_Fault : Bool;
+      QDrive_Alarm : Bool;
+      QwAlarm : Word;   // Bit alarm procedure
+      Q_CW : Word;   // Out Control Word for VSD
+      Q_SP_Speed : Word;   // Out SP Speed for VSD
+      QAct_Speed : Real;   // Drive Actual Speed
+      QAct_Volt : Real;   // Drive Actual Voltage
+      QAct_Amp : Real;   // Drive Actual Ampere
+      QAct_KW : Real;   // Drive Actual KW
+      QAct_Nm : Real;   // Drive Actual Torque
+   END_VAR
+
+   VAR_IN_OUT 
+      VISIBILITY : Byte;   // Bit 0: Tab1 of window; Bit 1: Tab2 of window; ... ; Bit 7: Minimize
+      OPdwCmd : DWord;   // Contorl word HMI
+   END_VAR
+
+   VAR 
+      FB_SIM : Bool;
+      SP_SpeedHz : Real;   // setengah dari 100%
+      Drive_Actual_Speed : Real;   // Drive Actual Speed in Percen
+      Drive_CW : Word;
+      Drive_SW : Word;
+      SIM_T : Time;
+      QSIM_T : Time;
+      SIM_T_STOP : Time;
+      QSIM_T_STOP : Time;
+      QCMD_SIM : Bool;
+      OP_RESET : Bool;   // Reset errors
+      QFLOW_MON_ACK : Bool;
+      OP_VISIBILITY : Byte;   // Bit 0: Tab1 of window; Bit 1: Tab2 of window; ... ; Bit 7: Minimize
+      VISIBILITY_OLD : Byte;   // Save last status of VISIBILITY
+      QFB_RUN : Bool;
+      Drive_FB_ON : Bool;   // Drive_Running
+      Drive_Fault : Bool;   // Drive_Fault Active
+      Drive_Alarm : Bool;   // Drive_Alarm Active
+      Drive_OK : Bool;
+      SE_L_RESET_LINK : Bool;   // Signal edge for the reset input from linking
+      SE_L_RESET_LINK_COND : Bool;   // Condition of signal edge
+      SE_L_RESET_OP : Bool;   // Signal edge for the reset input from operator
+      TSTARTING {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+      TSTOPPING {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+      TFLOW {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+      TSTARTING_SIM {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+      TSTOPPING_SIM {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+   END_VAR
+
+   VAR_TEMP 
+      CON_ERR : Bool;   // Error in motor condition
+      MON_ERR_STARTING : Bool;   // Monitoring error for starting motor in process mode
+      MON_ERR_STOPPING : Bool;   // Monitoring error for stopping motor in process mode
+      MON_SIM_STARTING : Bool;   // Monitoring error for starting motor in simulation mode
+      MON_SIM_STOPPING : Bool;   // Monitoring error for stopping motor in simulation mode
+      FB_ERR : Bool;   // Feedback error in process mode
+      MON_ERR_FLOW2 : Bool;
+      START_FLOW_TIME2 : Bool;
+      START_FLOW_TIME : Bool;   // Start Signal of delay time for flow
+      MON_ERR_FLOW : Bool;   // Monitoring error for flow
+   END_VAR
+
+
+BEGIN
+	(********************************
+	           Start up
+	*********************************)
+	IF #RESTART= true THEN
+	  // Restart case
+	  #QCMD_ON:= false;
+	  #QSTOP:=true;
+	  #QSTOPPING:=false;
+	  #QRUN:=false;
+	  #QSTARTING:=false;
+	  #VISIBILITY:=0;
+	  #OPdwCmd:=0;
+	ELSE
+	  // Normal case
+	  
+	  (******************************************
+	    Network 1: Operating mode: manual/automatic
+	    Vaiable: OPdwCmd  Bit:  16  =  Manual
+	    Vaiable: OPdwCmd  Bit:  17  =  Automatic
+	  *******************************************)
+	  IF (#LIOP_SEL=true AND #L_AUT=true) OR (#OPdwCmd.%X17=true AND #LIOP_SEL=false) THEN
+	    #QMAN_AUT:=true;
+	    #OPdwCmd.%X16:=false;
+	    #OPdwCmd.%X17:=false;
+	  ELSIF (#LIOP_SEL=true AND #L_AUT=false) OR (#OPdwCmd.%X16=true AND #LIOP_SEL=false) THEN
+	    #QMAN_AUT:= false;
+	    #OPdwCmd.%X16:=false;
+	    #OPdwCmd.%X17:=false;
+	  END_IF;
+	  
+	  (******************************************
+	    Network 2: Control mode: local/remote
+	    Vaiable: OPdwCmd  Bit:  18  =  Local
+	    Vaiable: OPdwCmd  Bit:  19  =  Remote
+	  *******************************************)
+	  IF (#LIOP_SEL=true AND #L_REMOTE=true) OR (#OPdwCmd.%X19=true AND #LIOP_SEL=false) THEN
+	    #QREMOTE:=true;
+	    #OPdwCmd.%X18:=false;
+	    #OPdwCmd.%X19:=false;
+	  ELSIF (#LIOP_SEL=true AND #L_REMOTE=false) OR (#OPdwCmd.%X18=true AND #LIOP_SEL=false) THEN
+	    #QREMOTE:= false;
+	    #OPdwCmd.%X18:=false;
+	    #OPdwCmd.%X19:=false;
+	  END_IF;
+	  
+	  (******************************************
+	    Network 3: Simulation On/Off
+	    Vaiable: OPdwCmd  Bit:  20  =  Process
+	    Vaiable: OPdwCmd  Bit:  21  =  Simulation
+	  *******************************************)
+	  IF (#LIOP_SEL=true AND #L_SIM=true) OR (#OPdwCmd.%X21=true AND #LIOP_SEL=false) THEN
+	    #QSIM:=true;
+	    #OPdwCmd.%X20:=false;
+	    #OPdwCmd.%X21:=false;
+	  ELSIF (#LIOP_SEL=true AND #L_SIM=false) OR (#OPdwCmd.%X20=true AND #LIOP_SEL=false) THEN
+	    #QSIM:= false;
+	    #OPdwCmd.%X20:=false;
+	    #OPdwCmd.%X21:=false;
+	  END_IF;
+	  
+	  (*************************************
+	    Network 4: Reset Operation
+	    Vaiable: OPdwCmd  Bit:  24  =  Reset
+	  **************************************)
+	  // Rising edge by linking
+	  IF #L_RESET=true AND #SE_L_RESET_LINK_COND=false THEN
+	    #SE_L_RESET_LINK:=true;
+	    #SE_L_RESET_LINK_COND:=true;
+	  ELSIF #L_RESET=true AND #SE_L_RESET_LINK_COND=true THEN
+	    #SE_L_RESET_LINK:=false;
+	  ELSE
+	    #SE_L_RESET_LINK_COND:=false;
+	  END_IF;
+	  // Rising edge by operator
+	  IF #OPdwCmd.%X24=true THEN
+	    #SE_L_RESET_OP:=true;
+	    #OPdwCmd.%X24:=false;
+	  ELSE
+	    #SE_L_RESET_OP:=false;
+	  END_IF;
+	  // Reset error #OP_RESET:=((#LIOP_SEL AND #SE_L_RESET_LINK) OR (#SE_L_RESET_OP AND NOT #LIOP_SEL)) AND NOT #LOCK;
+	  #OP_RESET:=(#L_RESET) OR (#SE_L_RESET_OP AND NOT #LIOP_SEL) AND NOT #LOCK;
+	  
+	  (**********************************************
+	    Network 5: Monitoring feedback ON/OFF
+	    Vaiable: OPdwCmd  Bit:  8  =  Monitoring ON
+	    Vaiable: OPdwCmd  Bit:  9  =  Monitoring OFF
+	  ***********************************************)
+	  IF (#LIOP_SEL=true AND #L_MON=false) OR (#OPdwCmd.%X9=true AND #LIOP_SEL=false)THEN
+	    #QMON:=false;
+	    #OPdwCmd.%X8:=false;
+	    #OPdwCmd.%X9:=false;
+	  ELSIF (#LIOP_SEL=true AND #L_MON=true) OR (#OPdwCmd.%X8=true AND #LIOP_SEL=false)THEN
+	    #QMON:=true;
+	    #OPdwCmd.%X8:=false;
+	    #OPdwCmd.%X9:=false;
+	  END_IF;
+	  
+	  (***************************************************
+	    Network 6: Monitoring flow ON/OFF
+	    Vaiable: OPdwCmd  Bit:  10  =  Monitoring flow ON
+	    Vaiable: OPdwCmd  Bit:  11  =  Monitoring flow OFF
+	  ****************************************************)
+	  IF (#LIOP_SEL=true AND #L_FLOW_MON=false) OR (#OPdwCmd.%X11=true AND #LIOP_SEL=false)THEN
+	    #QFLOW_MON:=false;
+	    #OPdwCmd.%X10:=false;
+	    #OPdwCmd.%X11:=false;
+	  ELSIF (#LIOP_SEL=true AND #L_FLOW_MON=true) OR (#OPdwCmd.%X10=true AND #LIOP_SEL=false)THEN
+	    #QFLOW_MON:=true;
+	    #OPdwCmd.%X10:=false;
+	    #OPdwCmd.%X11:=false;
+	  END_IF;
+	  
+	   (**********************************************
+	    Network 6: START/STOP Motor
+	    Vaiable: OPdwCmd  Bit:  0  =  STOP Motor
+	    Vaiable: OPdwCmd  Bit:  1  =  START Motor
+	  ***********************************************)
+	  IF #QERR=false THEN
+	    // No errors occurs
+	    IF #QSIM=false THEN
+	     // Simulation mode is not active
+	      // Automatic/Manual mode
+	      IF #QMAN_AUT=true THEN
+	        // Automatic mode is active
+	        // OPEN/CLOSE valve by linking (AUT_ON)
+	        #QCMD_ON:=#AUT_ON;
+	        #OPdwCmd.%X0:=false;
+	        #OPdwCmd.%X1:=false;
+	      ELSE
+	       // Automatic mode is not active
+	        // Local/Remote mode
+	        IF #QREMOTE=false THEN
+	          // Local mode is active
+	          // OPEN/CLOSE valve by linking (MAN_ON)
+	          #QCMD_ON:=#MAN_ON AND NOT #QMAN_AUT;
+	          #OPdwCmd.%X0:=false;
+	          #OPdwCmd.%X1:=false;
+	        ELSE
+	         // Remote mode is active
+	          // Open valve by operator
+	          IF #OPdwCmd.%X1=true THEN
+	            #QCMD_ON:=true;
+	            #OPdwCmd.%X0:=false;
+	            #OPdwCmd.%X1:=false;
+	          END_IF;
+	          // Close valve by operator
+	          IF #OPdwCmd.%X0=true THEN
+	            #QCMD_ON:=false;
+	            #OPdwCmd.%X0:=false;
+	            #OPdwCmd.%X1:=false;
+	          END_IF;
+	        END_IF;
+	      END_IF;
+	    ELSE
+	      // Local/Remote mode
+	      IF #QREMOTE=false THEN
+	        // Local mode is active
+	          // OPEN/CLOSE valve by linking (SIM_ON)
+	          #QCMD_SIM:=#SIM_ON;
+	          #OPdwCmd.%X0:=false;
+	          #OPdwCmd.%X1:=false;
+	      ELSE
+	        // Remote mode is active
+	          // Open valve by operator
+	          IF #OPdwCmd.%X1=true THEN
+	            #QCMD_SIM:=true;
+	            #OPdwCmd.%X0:=false;
+	            #OPdwCmd.%X1:=false;
+	          END_IF;
+	          // Close valve by operator
+	          IF #OPdwCmd.%X0=true THEN
+	            #QCMD_SIM:=false;
+	            #OPdwCmd.%X0:=false;
+	            #OPdwCmd.%X1:=false;
+	          END_IF;        
+	       END_IF;
+	    END_IF;  
+	  ELSE
+	    // Errors occurs
+	    #QCMD_ON:=false;
+	    #QCMD_SIM:=false;
+	    #OPdwCmd.%X0:=false;
+	    #OPdwCmd.%X1:=false;
+	  END_IF;
+	  
+	  (****************************************
+	    Network 7: Drive FB_Run
+	  *****************************************)
+	 // #Drive_FB_ON := #IN_SW.%X2 OR ((#IN_SP_Speed < 5.0)AND #QCMD_ON);
+	  #Drive_FB_ON := #IN_SW.%X11 OR ((#IN_SP_Speed < 5.0)AND #QCMD_ON);
+	  #QFB_RUN := (#FB_MODE = FALSE AND #Drive_FB_ON) OR (#FB_MODE = TRUE AND (#FB_ON OR ((#IN_SP_Speed < 5.0)AND #QCMD_ON)));
+	  (****************************************
+	    Network 8: Control signal to the Motor (HMI Status)
+	  *****************************************)
+	  IF #QERR=false THEN
+	    // Motor is stopped
+	    IF (((#QFB_RUN=false OR #QMON=false) AND #QSIM=false AND #QCMD_ON=false) OR
+	      ((#FB_SIM=false OR #QMON=false) AND #QSIM=true AND #QCMD_SIM=false)) AND #QSTOPPING=true THEN
+	      #QSTOP:=true;
+	      #QSTOPPING:=false;
+	      #QRUN:=false;
+	      #QSTARTING := false;
+	      #QwState:=0;
+	    END_IF;
+	    // Motor is stopping
+	    IF ((#QSIM=false AND #QCMD_ON=false) OR (#QSIM=true AND #QCMD_SIM=false)) AND (#QRUN=true OR #QSTARTING=true) THEN
+	      #QSTOP:=false;
+	      #QSTOPPING:=true;
+	      #QRUN:=false;
+	      #QSTARTING:=false;
+	      #QwState:=3;
+	    END_IF;
+	    // Motor is running 
+	    IF (((#QFB_RUN=true OR #QMON=false) AND #QSIM=false AND #QCMD_ON=true) OR
+	      ((#FB_SIM=true OR #QMON=false) AND #QSIM=true AND #QCMD_SIM=true)) AND #QSTARTING=true THEN    
+	    #QSTOP:=false;
+	    #QSTOPPING:=false;
+	    #QRUN:=true;
+	    #QSTARTING:=false;
+	    #QwState:=2;
+	    END_IF;
+	    // Motor is starting 
+	    IF ((#QSIM=false AND #QCMD_ON=true) OR (#QSIM=true AND #QCMD_SIM=true)) AND #QSTOP=true THEN
+	    #QSTOP:=false;
+	    #QSTOPPING:=false;
+	    #QRUN:=false;
+	    #QSTARTING:=true;
+	    #QwState:=1;
+	    END_IF;
+	  END_IF;
+	  (*******************************************************************
+	    Network 9: Drive Control Word
+	    *******************************************************************)
+	  //Drive_OK
+	  #Drive_OK := (#IN_SW.%X0 = true AND #IN_SW.%X1 = true) OR
+	  (#IN_SW.%X2 = true AND #IN_SW.%X3 = false AND #IN_SW.%X4 = false AND #IN_SW.%X6 = false AND #IN_SW.%X7 = false);
+	
+	  //Enable PLC Control
+	  #Q_CW.%X0 := false;
+	  #Q_CW.%X1 := false;
+	  #Q_CW.%X2 := true;
+	  #Q_CW.%X3 := true;
+	  #Q_CW.%X4 := #QCMD_ON = true;   // quick stop
+	  #Q_CW.%X5 := true;
+	  #Q_CW.%X6 := (#QCMD_ON = true AND #Drive_OK = true);
+	  #Q_CW.%X7 := #OP_RESET;
+	  #Q_CW.%X8 := false;
+	  #Q_CW.%X9 := false;
+	  #Q_CW.%X10 := true;
+	  #Q_CW.%X11 := false;
+	  #Q_CW.%X12 := false;
+	  #Q_CW.%X13 := false;
+	  #Q_CW.%X14 := false;
+	  #Q_CW.%X15 := false;
+	  //Drive ON/OFF
+	 // IF #QCMD_ON = true THEN
+	 //     #Q_CW.%X6 := true;
+	 // ELSIF #QCMD_ON = FALSE THEN
+	 //     #Q_CW.%X6 := FALSE;
+	 // END_IF;
+	  //Drive Reversing
+	  //IF #drive_reversing = true THEN
+	 // #Q_CW.%X11 := true;
+	 // ELSIF  #drive_reversing = FALSE THEN
+	 //   #Q_CW.%X11 := FALSE;
+	 // END_IF;
+	//Drive Fault Reset
+	 // IF #OP_RESET = true THEN
+	 //     #Q_CW.%X7 := true;
+	 // ELSIF #OP_RESET = FALSE THEN
+	 //     #Q_CW.%X7 := FALSE;
+	 // END_IF;
+	  (*******************************************************************
+	    Network 10: Feedbacks for Running monitoring in process and simulation mode
+	  ********************************************************************)
+	  IF #QSIM=false AND #QMON=true  THEN
+	  // Feedback monitoring in process mode
+	    #TSTARTING(IN:=#QSTARTING,
+	               PT:=#MON_T,
+	               Q=>#MON_ERR_STARTING,
+	               ET=>#QMON_T);
+	     
+	    #TSTOPPING(IN:=#QSTOPPING,
+	              PT:=#MON_T_STOP,
+	              Q=>#MON_ERR_STOPPING,
+	              ET=>#QMON_T_STOP);
+	    // Feedback error
+	   #FB_ERR := (#QRUN AND NOT #QFB_RUN) OR (#QSTOP AND #QFB_RUN);
+	    IF #FB_ERR=true OR #MON_ERR_STARTING=true OR #MON_ERR_STOPPING=true THEN
+	      #QMON_ERR:=true;
+	    END_IF;
+	    
+	    
+	  ELSIF #QSIM=true AND #QMON=true THEN
+	    // Feedback monitoring in simulation mode
+	    #TSTARTING_SIM(IN:=#QSTARTING,
+	                  PT:=#SIM_T,
+	                  Q=>#MON_SIM_STARTING,
+	                  ET=>#QSIM_T);
+	    
+	    #TSTOPPING_SIM(IN:=#QSTOPPING,
+	                  PT:=#SIM_T_STOP,
+	                  Q=>#MON_SIM_STOPPING,
+	                  ET=>#QSIM_T_STOP);
+	    
+	    // Feedback for start/stop motor in simulation mode
+	    IF #MON_SIM_STOPPING=true OR #QERR=true THEN
+	      // Feedback for stop
+	      #FB_SIM:=false;
+	    ELSIF #MON_SIM_STARTING=true THEN
+	      // Feedback for start
+	      #FB_SIM:=true;
+	    END_IF;
+	  END_IF;
+	
+	  (*******************************************************************
+	    Network 11: Feedbacks for flow monitoring in process and simulation mode
+	  ********************************************************************)
+	// Delay time for feedbak flow monitoring
+	  #START_FLOW_TIME:=#QFLOW_MON AND (#QSTARTING OR #QRUN) AND NOT #QFLOW_MON_ACK;
+	  #TFLOW(IN:=#START_FLOW_TIME,
+	         PT:=#FLOW_MT,
+	         Q=>#MON_ERR_FLOW,
+	         ET=>#QFLOW_MT);
+	  
+	  //
+	  #START_FLOW_TIME2:=false;
+	  IF (#FLOW < #FLOW_LL) THEN
+	    #START_FLOW_TIME2:=true;
+	  END_IF;
+	  
+	     #TFLOW(IN:=#START_FLOW_TIME2,
+	         PT:=#FLOW_MT,
+	         Q=>#MON_ERR_FLOW2,
+	         ET=>#QFLOW_MT);
+	   IF #MON_ERR_FLOW2 THEN
+	      #QFLOW_ERR:=true;
+	   END_IF;
+	  (**********************************************
+	    Network 12: Drive Set Speed
+	   ***********************************************)
+	   //Drive Setpoint Speed in Hz
+	   #SP_SpeedHz := #IN_SP_Speed / 2;
+	   //Limit Speed 0 to 50 Hz
+	   IF #SP_SpeedHz<0.0 THEN
+	       GOTO N004;
+	   END_IF;
+	   IF #SP_SpeedHz > 50.0 THEN
+	        GOTO N004;
+	    END_IF;
+	//OUT = [ ((IN–LO_LIM)/(HI_LIM–LO_LIM)) ∗ (K2–K1) ] + K1
+	//UNSCALE Setpoint Speed VSD with hardwire
+	//#Q_SP := REAL_TO_INT(((((#IN_SP / 2) - #SP_Lo) / (#SP_Hi - #SP_Lo)) * (#SP_K2 - #SP_K1)) + #SP_K1);
+	    IF #FB_MODE = TRUE THEN
+	        #Q_SP_Speed := DINT_TO_WORD(ROUND(#SP_SpeedHz * real#100.0) * DINT#27648 / DINT#5000);
+	        #Drive_Actual_Speed := (INT_TO_REAL(#"IN _AV") / 27648.0 * 100.0);
+	    ELSIF #FB_MODE = FALSE THEN
+	        #Q_SP_Speed := DINT_TO_WORD(ROUND(#SP_SpeedHz * real#100.0) * DINT#16384 / DINT#5000);
+	        #Drive_Actual_Speed := (INT_TO_REAL(#"IN _AV") / 16354.0 * 100.0);
+	    END_IF;
+	N004:  ;
+	    
+	   (**********************************************
+	    Network 13: Drive Actual
+	  ***********************************************)
+	    #QAct_Speed := #Drive_Actual_Speed;
+	 //   #QAct_Volt := (INT_TO_REAL(#IN_Volt) / 16354.0 * 1000.0);
+	//    #QAct_Amp := (INT_TO_REAL(#IN_Ampere) / 16354.0 * 100.0);
+	//    #QAct_KW := (INT_TO_REAL(#IN_KW) / 16354.0 * 100.0);
+	//    #QAct_Nm := (INT_TO_REAL(#IN_Nm) / 16354.0 * 100.0);
+	
+	  (**********************************************
+	    Network 14: Check errors
+	  ***********************************************)
+	   //Drive Fault
+	   #QDrive_Fault := #IN_SW.%X3;
+	   //Drive Alarm
+	   #QDrive_Alarm := #IN_SW.%X7;
+	   // External error
+	  #QERR_EXT:=#ERR_EXTERN;  
+	  // Interlock error
+	  IF #LOCK=true AND ( #QSTARTING=true OR #QRUN=true) THEN
+	    #QLOCK:=true;
+	  END_IF;
+	  //
+	  IF #MPS=true THEN
+	    #QMPS:=true;
+	  END_IF;
+	  
+	  // Error in valve condition
+	  #CON_ERR:=NOT((#QSTOP AND NOT #QSTARTING AND NOT #QRUN AND NOT #QSTOPPING) OR
+	  (NOT #QSTOP AND #QSTARTING AND NOT #QRUN AND NOT #QSTOPPING) OR
+	  (NOT #QSTOP AND NOT #QSTARTING AND #QRUN AND NOT #QSTOPPING) OR
+	  (NOT #QSTOP AND NOT #QSTARTING AND NOT #QRUN AND #QSTOPPING));
+	
+	  (**********************************************
+	    Network 15: General error
+	  ***********************************************)
+	  #QERR:=#QDrive_Fault OR #QDrive_Alarm OR #QERR_EXT OR #QMON_ERR OR #QFLOW_ERR OR #QMPS OR #QLOCK OR #CON_ERR;
+	  
+	  (**********************************************
+	    Network 16: If error then stop
+	  ***********************************************)
+	  IF #QERR=true THEN
+	    #QSTOP:=true;
+	    #QSTARTING:=false;
+	    #QRUN:=false;
+	    #QSTOPPING:=false;
+	    #QwState:=0;
+	  END_IF;
+	  // Reset errors
+	  IF #OP_RESET=true THEN
+	    #QMON_ERR:=false;
+	    #QLOCK:=false;
+	    #QFLOW_ERR:=false;
+	    #QMPS:=false;
+	  END_IF;
+	    // End normal case
+	END_IF;
+	
+	(****************************************************
+	  Network 13: Influence visibility of faceplate window
+	*****************************************************)
+	IF #OP_VISIBILITY<>#VISIBILITY_OLD THEN
+	  #VISIBILITY_OLD:=#OP_VISIBILITY;
+	  #VISIBILITY:=#OP_VISIBILITY;
+	ELSIF #VISIBILITY<>#VISIBILITY_OLD THEN
+	  #VISIBILITY_OLD:=#VISIBILITY;
+	  #OP_VISIBILITY:=#VISIBILITY;
+	END_IF;
+	(********************************
+	  Network 14: Set state for HMI
+	*********************************)
+	#QdwState.%X0:=#QSTOP AND NOT #QERR;
+	#QdwState.%X1:=#QSTARTING;
+	#QdwState.%X2:=#QRUN;
+	#QdwState.%X3:=#QSTOPPING;
+	#QdwState.%X4:=false;
+	#QdwState.%X5:=false;
+	#QdwState.%X6:=false;
+	#QdwState.%X7:=false;
+	#QdwState.%X8:=#QMON;
+	#QdwState.%X9:=#QMON_ERR;
+	#QdwState.%X10:=#QFLOW_MON;
+	#QdwState.%X11:=#QFLOW_ERR;
+	#QdwState.%X12:=#QMPS;
+	#QdwState.%X13:=#QDrive_Fault;
+	#QdwState.%X14:=#QDrive_Alarm;
+	#QdwState.%X15:=false;
+	#QdwState.%X16:=#QMAN_AUT;
+	#QdwState.%X17:=#QREMOTE;
+	#QdwState.%X18:=#QSIM;
+	#QdwState.%X19:=false;
+	#QdwState.%X20:=false;
+	#QdwState.%X21:=false;
+	#QdwState.%X22:=false;
+	#QdwState.%X23:=false;
+	#QdwState.%X24:=#QERR;
+	#QdwState.%X25:=#QERR_EXT;
+	#QdwState.%X26:=#QLOCK;
+	#QdwState.%X27:=#LOCK;
+	#QdwState.%X28:=false;
+	#QdwState.%X29:=false;
+	#QdwState.%X30:=false;
+	#QdwState.%X31:=false;
+	
+	(********************************
+	  Network 15: Bit alarm procedure
+	*********************************)
+	#QwAlarm.%X0:=#QMON_ERR;
+	#QwAlarm.%X1:=#QFLOW_ERR;
+	#QwAlarm.%X2:=#MPS;
+	#QwAlarm.%X3:=#QDrive_Fault;
+	#QwAlarm.%X4:=#QLOCK;
+	#QwAlarm.%X5:=#QDrive_Alarm;
+	#QwAlarm.%X6:=#QERR_EXT;
+	#QwAlarm.%X7:=#QERR;
+	#QwAlarm.%X8:=#QSTOP;
+	#QwAlarm.%X9:=#QSTARTING;
+	#QwAlarm.%X10:=#QRUN;
+	#QwAlarm.%X11:=#QSTOPPING;
+	#QwAlarm.%X12:=#LOCK;
+	#QwAlarm.%X13:=#QREMOTE;
+	#QwAlarm.%X14:=#QMAN_AUT;
+	#QwAlarm.%X15:=#QSIM;
+END_FUNCTION_BLOCK
+

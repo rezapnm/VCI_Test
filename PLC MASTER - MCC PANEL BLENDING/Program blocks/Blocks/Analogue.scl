@@ -1,0 +1,621 @@
+﻿FUNCTION_BLOCK "Analogue"
+TITLE = Analogue
+{ S7_Optimized_Access := 'FALSE' }
+AUTHOR : RM
+FAMILY : MON
+VERSION : 0.1
+   VAR_INPUT 
+      LOCK : Bool;
+      ERR_EXTERN : Bool;
+      LIOP_SEL : Bool;
+      L_SIM : Bool;
+      L_RESET : Bool;
+      IN_MODE : Bool;
+      BIPOLAR : Bool;
+      IN_INT : Int := 0;
+      IN : Real := 55.0;
+      IN_SIM : Real := 55.0;
+      HI_LIM : Real := 100.0;
+      LO_LIM : Real;
+      LIM_ULA_Enable : Bool;
+      LIM_ULA : Real := 90.0;
+      LIM_ULW_Enable : Bool;
+      LIM_ULW : Real := 80.0;
+      LIM_LLW_Enable : Bool;
+      LIM_LLW : Real := 20.0;
+      LIM_LLA_Enable : Bool;
+      LIM_LLA : Real := 10.0;
+      LIM_HYS_Set : Bool;
+      LIM_HYS : Real;
+      INSTANCE : String := 'Analogue_001';
+      RESTART : Bool;
+   END_VAR
+
+   VAR_OUTPUT 
+      QdwState : DWord;
+      QOUT : Real;
+      QHI_LIM : Real;
+      QLO_LIM : Real;
+      QLIM_ULA_Enable : Bool;
+      QLIM_ULA : Real;
+      QLIM_ULW_Enable : Bool;
+      QLIM_ULW : Real;
+      QLIM_LLW_Enable : Bool;
+      QLIM_LLW : Real;
+      QLIM_LLA_Enable : Bool;
+      QLIM_LLA : Real;
+      QLIM_HYS : Real;
+      QALARM_UL : Bool;
+      QWARN_UL : Bool;
+      QWARN_LL : Bool;
+      QALARM_LL : Bool;
+      QSIM : Bool;
+      QLOCK : Bool;
+      QERR : Bool;
+      QERR_EXT : Bool;
+      QERR_OVERRUN : Bool;
+      QERR_HIGHRANGE : Bool;
+      QERR_LOWRANGE : Bool;
+      QERR_WIRE : Bool;
+      QwAlarm : Word;
+   END_VAR
+
+   VAR_IN_OUT 
+      VISIBILITY : Byte := 0;
+      OPdwCmd : DWord;
+   END_VAR
+
+   VAR 
+      OP_RESET : Bool;
+      QLIM_HYS_Set : Bool;
+      QIN_MODE : Bool;
+      OP_LIM_ULA : Real;
+      OP_LIM_ULW : Real;
+      OP_LIM_LLW : Real;
+      OP_LIM_LLA : Real;
+      OP_SIM_Value : Real;
+      OP_LIM_HYS_Perc : Real;
+      OP_LIM_HYS_Abs : Real;
+      OP_HI_LIM : Real;
+      OP_LO_LIM : Real;
+      OP_VISIBILITY : Byte;
+      VISIBILITY_OLD : Byte;
+      SEF_L_RESET_Link : Bool;
+      Condition_SEF_L_RESET_Link : Bool;
+      SEF_L_RESET_OP : Bool;
+      Condition_Enable_ULA : Bool;
+      Condition_Enable_ULW : Bool;
+      Condition_Enable_LLW : Bool;
+      Condition_Enable_LLA : Bool;
+   END_VAR
+
+
+BEGIN
+	(*
+	Network 1: Start up
+	*)
+	IF #RESTART= true THEN
+	  #QOUT:= 0;
+	  #OPdwCmd:=0;
+	END_IF;
+	
+	(*
+	Network 2: Simulation On/Off
+	Vaiable: OPdwCmd  Bit:  20  =  Process
+	Vaiable: OPdwCmd  Bit:  21  =  Simulation
+	*)
+	IF (#LIOP_SEL=true AND #L_SIM=true) OR (#OPdwCmd.%X21=true AND #LIOP_SEL=false) THEN
+	  #QSIM:=true;
+	  #OPdwCmd.%X20:=false;
+	  #OPdwCmd.%X21:=false;
+	ELSIF (#LIOP_SEL=true AND #L_SIM=false) OR (#OPdwCmd.%X20=true AND #LIOP_SEL=false) THEN
+	  #QSIM:= false;
+	  #OPdwCmd.%X20:=false;
+	  #OPdwCmd.%X21:=false;
+	END_IF;
+	
+	(*
+	Network 3: Mode limit Hysteresis
+	Vaiable: OPdwCmd  Bit:  12  =  Hysteresis Percental
+	Vaiable: OPdwCmd  Bit:  13  =  Hysteresis Absolute
+	*)
+	IF (#LIOP_SEL=true AND #LIM_HYS_Set=true) OR (#OPdwCmd.%X13=true AND #LIOP_SEL=false) THEN
+	  #QLIM_HYS_Set:=true;
+	  #OPdwCmd.%X12:=false;
+	  #OPdwCmd.%X13:=false;
+	ELSIF (#LIOP_SEL=true AND #LIM_HYS_Set=false) OR (#OPdwCmd.%X12=true AND #LIOP_SEL=false) THEN
+	  #QLIM_HYS_Set:=false;
+	  #OPdwCmd.%X12:=false;
+	  #OPdwCmd.%X13:=false;
+	END_IF;
+	
+	(*
+	Network 4: Mode Periphery / Real value
+	Vaiable: OPdwCmd  Bit:  14  =  Periphery
+	Vaiable: OPdwCmd  Bit:  15  =  Real value
+	*)
+	IF (#LIOP_SEL=true AND #IN_MODE=true) OR (#OPdwCmd.%X15=true AND #LIOP_SEL=false) THEN
+	  #QIN_MODE:=true;
+	  #OPdwCmd.%X14:=false;
+	  #OPdwCmd.%X15:=false;
+	ELSIF (#LIOP_SEL=true AND #IN_MODE=false) OR (#OPdwCmd.%X14=true AND #LIOP_SEL=false) THEN
+	  #QIN_MODE:=false;
+	  #OPdwCmd.%X14:=false;
+	  #OPdwCmd.%X15:=false;
+	END_IF;
+	
+	(*
+	Network 5: Reset Operation
+	Vaiable: OPdwCmd  Bit:  24  =  Reset
+	*)
+	// Rising edge by linking
+	IF #L_RESET=true AND #Condition_SEF_L_RESET_Link=false THEN
+	  #SEF_L_RESET_Link:=true;
+	  #Condition_SEF_L_RESET_Link:=true;
+	ELSIF #L_RESET=true AND #Condition_SEF_L_RESET_Link=true THEN
+	  #SEF_L_RESET_Link:=false;
+	ELSE
+	  #Condition_SEF_L_RESET_Link:=false;
+	END_IF;
+	// Rising edge by operator
+	IF #OPdwCmd.%X24=true THEN
+	  #SEF_L_RESET_OP:=true;
+	  #OPdwCmd.%X24:=false;
+	ELSE
+	  #SEF_L_RESET_OP:=false;
+	END_IF;
+	// Reset error
+	#OP_RESET:=(#LIOP_SEL=true AND #SEF_L_RESET_Link=true) OR (#SEF_L_RESET_OP=true AND #LIOP_SEL=false);
+	
+	(*
+	Network 6: Enable alarm for upper limit
+	Vaiable: OPdwCmd  Bit:  0  =  Enable alarm upper limit
+	*)
+	IF #OPdwCmd.%X0=true THEN
+	  #Condition_Enable_ULA:=NOT #Condition_Enable_ULA;
+	  #OPdwCmd.%X0:=false;
+	END_IF;
+	
+	IF (#LIOP_SEL=true AND #LIM_ULA_Enable=true) OR (#LIOP_SEL=false AND #Condition_Enable_ULA=true) THEN  
+	  #QLIM_ULA_Enable:=true;
+	ELSIF (#LIOP_SEL=true AND #LIM_ULA_Enable=false) OR (#LIOP_SEL=false AND #Condition_Enable_ULA=false) THEN
+	  #QLIM_ULA_Enable:=false;
+	END_IF;
+	
+	  
+	(*
+	Network 7: Enable warning for upper limit
+	Vaiable: OPdwCmd  Bit:  1  =  Enable warning upper limit
+	*)
+	IF #OPdwCmd.%X1=true THEN
+	  #Condition_Enable_ULW:=NOT #Condition_Enable_ULW;
+	  #OPdwCmd.%X1:=false;
+	END_IF;
+	
+	IF (#LIOP_SEL=true AND #LIM_ULW_Enable=true) OR (#LIOP_SEL=false AND #Condition_Enable_ULW=true) THEN  
+	  #QLIM_ULW_Enable:=true;
+	ELSIF (#LIOP_SEL=true AND #LIM_ULW_Enable=false) OR (#LIOP_SEL=false AND #Condition_Enable_ULW=false) THEN
+	  #QLIM_ULW_Enable:=false;
+	END_IF;
+	
+	(*
+	Network 8: Enable warning for lower limit
+	Vaiable: OPdwCmd  Bit:  2  =  Enable warning lower limit
+	*)
+	IF #OPdwCmd.%X2=true THEN
+	  #Condition_Enable_LLW:=NOT #Condition_Enable_LLW ;
+	  #OPdwCmd.%X2:=false;
+	END_IF;
+	
+	IF (#LIOP_SEL=true AND #LIM_LLW_Enable=true) OR (#LIOP_SEL=false AND #Condition_Enable_LLW=true) THEN  
+	  #QLIM_LLW_Enable:=true;
+	ELSIF (#LIOP_SEL=true AND #LIM_LLW_Enable=false) OR (#LIOP_SEL=false AND #Condition_Enable_LLW=false) THEN
+	  #QLIM_LLW_Enable:=false;
+	END_IF;
+	
+	(*
+	Network 9: Enable alarm for lower limit
+	Vaiable: OPdwCmd  Bit:  3  =  Enable alarm lower limit
+	*)
+	IF #OPdwCmd.%X3=true THEN
+	  #Condition_Enable_LLA:=NOT #Condition_Enable_LLA;
+	  #OPdwCmd.%X3:=false;
+	END_IF;
+	
+	IF (#LIOP_SEL=true AND #LIM_LLA_Enable=true) OR (#LIOP_SEL=false AND #Condition_Enable_LLA=true) THEN  
+	  #QLIM_LLA_Enable:=true;
+	ELSIF (#LIOP_SEL=true AND #LIM_LLA_Enable=false) OR (#LIOP_SEL=false AND #Condition_Enable_LLA=false) THEN
+	  #QLIM_LLA_Enable:=false;
+	END_IF;
+	
+	(*
+	Network 10: Calculate hysteresis value
+	*)
+	IF #LIOP_SEL=true AND #QLIM_HYS_Set=true THEN
+	  // Absolute by PLC
+	  #OP_HI_LIM:=#HI_LIM;
+	  #OP_LO_LIM:=#LO_LIM;
+	  #OP_LIM_HYS_Perc:=#LIM_HYS/((#HI_LIM-#LO_LIM)/100);
+	  #OP_LIM_HYS_Abs:=#LIM_HYS;
+	  #QHI_LIM:=#HI_LIM;
+	  #QLO_LIM:=#LO_LIM;
+	  #QLIM_HYS:=#OP_LIM_HYS_Abs;
+	ELSIF #LIOP_SEL=true AND #QLIM_HYS_Set=false THEN
+	  // Percental by PLC
+	  #OP_HI_LIM:=#HI_LIM;
+	  #OP_LO_LIM:=#LO_LIM;
+	  #OP_LIM_HYS_Perc:=#LIM_HYS;
+	  #OP_LIM_HYS_Abs:=#LIM_HYS*((#HI_LIM-#LO_LIM)/100);
+	  #QHI_LIM:=#HI_LIM;
+	  #QLO_LIM:=#LO_LIM;
+	  #QLIM_HYS:=#OP_LIM_HYS_Abs;
+	ELSIF #LIOP_SEL=false AND #QLIM_HYS_Set=true THEN
+	  // Absolute by operator
+	  #QHI_LIM:=#OP_HI_LIM;
+	  #QLO_LIM:=#OP_LO_LIM;
+	  #OP_LIM_HYS_Perc:=#OP_LIM_HYS_Abs/((#OP_HI_LIM-#OP_LO_LIM)/100);
+	  #QLIM_HYS:=#OP_LIM_HYS_Abs;
+	ELSE
+	  // Percental by operator
+	  #QHI_LIM:=#OP_HI_LIM;
+	  #QLO_LIM:=#OP_LO_LIM;
+	  #OP_LIM_HYS_Abs:=#OP_LIM_HYS_Perc*((#OP_HI_LIM-#OP_LO_LIM)/100);
+	  #QLIM_HYS:=#OP_LIM_HYS_Abs;
+	END_IF;
+	
+	//Transfer output to simulation value in process mode
+	IF #QSIM=false THEN
+	  #IN_SIM:=#QOUT;
+	END_IF;
+	(*
+	Network 11: Convert integer to real and scale it to selcted mode
+	*)
+	IF #QIN_MODE=false AND #QSIM=false AND #BIPOLAR=false THEN
+	  // Convert integer to real and scale in unipolar mode (4..20mA)
+	  #QOUT:=(INT_TO_REAL(#IN_INT)/27648*(#HI_LIM-#LO_LIM))+#LO_LIM;
+	ELSIF #QIN_MODE=false AND #QSIM=false AND #BIPOLAR=true THEN
+	  // Convert integer to real and scale in bipolar mode (4..20mA)
+	  #QOUT:=(((INT_TO_REAL(#IN_INT)+27648)/55296)*(#HI_LIM-#LO_LIM))+#LO_LIM;
+	END_IF;
+	
+	//Che errors
+	#QERR_EXT:=#ERR_EXTERN;
+	#QLOCK:=#LOCK;
+	
+	(*
+	Network 12: Check errors for simulation mode or real value
+	*)
+	IF (#QIN_MODE=true OR #QSIM=true) AND #QHI_LIM>=#QOUT AND #QLO_LIM<=#QOUT THEN
+	    #QERR_OVERRUN:=false;
+	    #QERR_HIGHRANGE:=false;
+	    #QERR_LOWRANGE:=false;
+	    #QERR_WIRE:=false;
+	  END_IF;
+	
+	(*
+	Network 13: Check errors for periphery unipolar mode (4..20mA)
+	*)
+	(*
+	    Measuring Range   Units       Range
+	    (4..20mA)         (Dez)
+	    ============================================
+	    >22,81            >32511      Overrun
+	    --------------------------------------------
+	    22,81              32511
+	      .                           High range
+	    20,01              27649         
+	    --------------------------------------------
+	    20,00              27648 
+	      .                           Nominal range
+	     4,00                  0
+	    --------------------------------------------
+	     3,99                 -1
+	      .                           Low range
+	     1,185             -4864
+	    --------------------------------------------
+	    <1,185            <-4864      Wire breakage
+	*)
+	IF #QSIM=false AND #QIN_MODE=false AND #BIPOLAR=false THEN
+	  CASE #IN_INT OF
+	    -4864..-1:      // Low range
+	    #QERR_OVERRUN:=false;
+	    #QERR_HIGHRANGE:=false;
+	    #QERR_LOWRANGE:=true;
+	    #QERR_WIRE:=false;
+	    0..27648:       // Nominal range
+	    #QERR_OVERRUN:=false;
+	    #QERR_HIGHRANGE:=false;
+	    #QERR_LOWRANGE:=false;
+	    #QERR_WIRE:=false;
+	    27649..32511:   // High range
+	    #QERR_OVERRUN:=false;
+	    #QERR_HIGHRANGE:=true;
+	    #QERR_LOWRANGE:=false;
+	    #QERR_WIRE:=false;
+	  ELSE
+	    IF #IN_INT>32511 THEN
+	      // Overrun
+	      #QERR_OVERRUN:=true;
+	      #QERR_HIGHRANGE:=false;
+	      #QERR_LOWRANGE:=false;
+	      #QERR_WIRE:=false;
+	    ELSE
+	      // Wire breakage
+	      #QERR_OVERRUN:=false;
+	      #QERR_HIGHRANGE:=false;
+	      #QERR_LOWRANGE:=false;
+	      #QERR_WIRE:=true;
+	    END_IF;  
+	  END_CASE;
+	END_IF;
+	
+	(*
+	Network 14: Check errors for periphery bipolar mode (4..20mA)
+	*)
+	(*
+	    Measuring Range   Units       Range
+	    (4..20mA)         (Dez)
+	    ============================================
+	    >22,81            >32511      Overrun
+	    --------------------------------------------
+	    22,81              32511
+	      .                           High range
+	    20,01              27649         
+	    --------------------------------------------
+	    20,00              27648 
+	      .                           Nominal range
+	     4,00             -27648
+	    --------------------------------------------
+	     3,99             -27649
+	      .                           Low range
+	     1,185            -32512
+	    --------------------------------------------
+	    <1,185           <-32512      Wire breakage
+	*)
+	IF #QSIM=false AND #QIN_MODE=false AND #BIPOLAR=true THEN
+	  CASE #IN_INT OF
+	    -32512..-27649:         // Low range
+	    #QERR_OVERRUN:=false;
+	    #QERR_HIGHRANGE:=false;
+	    #QERR_LOWRANGE:=true;
+	    #QERR_WIRE:=false;
+	    -27648..27648:         // Nominal range
+	    #QERR_OVERRUN:=false;
+	    #QERR_HIGHRANGE:=false;
+	    #QERR_LOWRANGE:=false;
+	    #QERR_WIRE:=false;
+	    27649..32511:         // High range
+	    #QERR_OVERRUN:=false;
+	    #QERR_HIGHRANGE:=true;
+	    #QERR_LOWRANGE:=false;
+	    #QERR_WIRE:=false;
+	  ELSE
+	    IF #IN_INT>32511 THEN
+	      // Overrun
+	      #QERR_OVERRUN:=true;
+	      #QERR_HIGHRANGE:=false;
+	      #QERR_LOWRANGE:=false;
+	      #QERR_WIRE:=false;
+	    ELSE
+	      // Wire breakage
+	      #QERR_OVERRUN:=false;
+	      #QERR_HIGHRANGE:=false;
+	      #QERR_LOWRANGE:=false;
+	      #QERR_WIRE:=true;
+	    END_IF;  
+	  END_CASE;
+	END_IF;
+	
+	(*
+	Network 15: Check range error for real value
+	*)
+	//  Check for high range injury
+	IF (#IN>#QHI_LIM AND #QIN_MODE=true AND #QSIM=false AND #LIOP_SEL=true) OR
+	   (#IN_SIM>#QHI_LIM AND #QSIM=true AND #LIOP_SEL=true) OR
+	   (#OP_SIM_Value>#QHI_LIM AND #QSIM=true AND #LIOP_SEL=false) THEN
+	      #QERR_HIGHRANGE:=true;
+	END_IF;
+	//  Check for low range injury
+	IF (#IN<#QLO_LIM AND #QIN_MODE=true AND #QSIM=false AND #LIOP_SEL=true) OR
+	   (#IN_SIM<#QLO_LIM AND #QSIM=true AND #LIOP_SEL=true) OR
+	   (#OP_SIM_Value<#QLO_LIM AND #QSIM=true AND #LIOP_SEL=false) THEN
+	      #QERR_LOWRANGE:=true;
+	END_IF;
+	    
+	(*
+	Network 16: General Error
+	*)
+	IF #OP_RESET=true THEN
+	  #QERR:=false;
+	ELSIF #QERR_EXT=true OR #QLOCK=true OR #QERR_OVERRUN OR #QERR_WIRE THEN
+	  #QERR:=true;
+	END_IF;
+	
+	(*
+	Network 17: Upper limit alarm
+	*)
+	IF #QLIM_ULA_Enable=true THEN
+	  IF #QLIM_ULA<=#QOUT THEN
+	    #QALARM_UL:=true;
+	  ELSIF (#QLIM_ULA-#QLIM_HYS)>#QOUT THEN
+	    #QALARM_UL:=false;
+	  END_IF;
+	ELSE
+	  #QALARM_UL:=false;
+	END_IF;
+	 
+	(*
+	Network 18: Upper limit warning
+	*)
+	IF #QLIM_ULW_Enable=true THEN
+	  IF #QLIM_ULW<=#QOUT THEN
+	    #QWARN_UL:=true;
+	  ELSIF (#QLIM_ULW-#QLIM_HYS)>#QOUT THEN
+	    #QWARN_UL:=false;
+	  END_IF;
+	ELSE
+	  #QWARN_UL:=false;
+	END_IF;
+	
+	(*
+	Network 19: Lower limit warning
+	*)
+	IF #QLIM_LLW_Enable=true THEN
+	  IF #QLIM_LLW>=#QOUT THEN
+	    #QWARN_LL:=true;
+	  ELSIF (#QLIM_LLW+#QLIM_HYS)<#QOUT THEN
+	    #QWARN_LL:=false;
+	  END_IF;
+	ELSE
+	  #QWARN_LL:=false;
+	END_IF;
+	
+	(*
+	Network 20: Lower limit alarm
+	*)
+	IF #QLIM_LLA_Enable=true THEN
+	  IF #QLIM_LLA>=#QOUT THEN
+	    #QALARM_LL:=true;
+	  ELSIF (#QLIM_LLA+#QLIM_HYS)<#QOUT THEN
+	    #QALARM_LL:=false;
+	  END_IF;
+	ELSE
+	  #QALARM_LL:=false;
+	END_IF;
+	
+	(*
+	Network 21: Set limit value
+	*)
+	IF #QSIM=true AND #LIOP_SEL=false THEN
+	  // Set values in simulation mode by operator
+	  #QHI_LIM:=#OP_HI_LIM;
+	  #QLO_LIM:=#OP_LO_LIM;
+	  #QLIM_ULA:=#OP_LIM_ULA;
+	  #QLIM_ULW:=#OP_LIM_ULW;
+	  #QLIM_LLW:=#OP_LIM_LLW;
+	  #QLIM_LLA:=#OP_LIM_LLA;
+	ELSE
+	  // Set values in normal mode by linking
+	  #OP_HI_LIM:=#HI_LIM;
+	  #QHI_LIM:=#HI_LIM;
+	  #OP_LO_LIM:=#LO_LIM;
+	  #QLO_LIM:=#LO_LIM;
+	  #OP_LIM_ULA:=#LIM_ULA;
+	  #QLIM_ULA:=#LIM_ULA;
+	  #OP_LIM_ULW:=#LIM_ULW;
+	  #QLIM_ULW:=#LIM_ULW;
+	  #OP_LIM_LLW:=#LIM_LLW;
+	  #QLIM_LLW:=#LIM_LLW;
+	  #OP_LIM_LLA:=#LIM_LLA;
+	  #QLIM_LLA:=#LIM_LLA;
+	END_IF;
+	
+	(*
+	Network 22: Check settings and values
+	*)
+	IF #QSIM=false AND #QIN_MODE=true THEN
+	  // Set settings in process mode by PLC (real value)
+	  #QOUT:=#IN;
+	ELSIF #QSIM=true AND #LIOP_SEL=false THEN
+	  // Set settings in simulation mode by operator (real value)
+	  #QOUT:=#OP_SIM_Value;
+	ELSIF #QSIM=true AND #LIOP_SEL=true THEN
+	  // Set settings in simulation mode by PLC (real value)
+	  #QOUT:=#IN_SIM;
+	END_IF;
+	
+	IF #QSIM=false AND #LIOP_SEL=true AND #IN_MODE=false THEN
+	  //Set settings in process mode by PLC (periphery)
+	  IF #QERR_EXT=true OR #QLOCK=true THEN
+	  //Set value in case of error
+	    #QOUT:=#QLO_LIM;
+	ELSE
+	  IF #QOUT>#QHI_LIM THEN
+	    #QOUT:=#QHI_LIM;
+	  ELSIF #QOUT<#LO_LIM THEN
+	    #QOUT:=#QLO_LIM;
+	  END_IF;
+	END_IF;
+	END_IF;
+	(*
+	Network 23: Infuence visibility of faceplate window
+	*)
+	IF #OP_VISIBILITY<>#VISIBILITY_OLD THEN
+	  #VISIBILITY_OLD:=#OP_VISIBILITY;
+	  #VISIBILITY:=#OP_VISIBILITY;
+	ELSIF #VISIBILITY<>#VISIBILITY_OLD THEN
+	  #VISIBILITY_OLD:=#VISIBILITY;
+	  #OP_VISIBILITY:=#VISIBILITY;
+	END_IF;
+	
+	(*
+	Network 24: Transfer output to simulation value in process mode
+	*)
+	IF #QSIM=false THEN
+	  #IN_SIM:=#QOUT;
+	END_IF;
+	
+	(*
+	Network 25: Check errors
+	*)
+	#QERR_EXT:=#ERR_EXTERN;
+	#QLOCK:=#LOCK;
+	
+	(*
+	Network 26: Set state for HMI
+	*)
+	#QdwState.%X0:= #QIN_MODE;
+	#QdwState.%X1:=#QLIM_HYS_Set;
+	#QdwState.%X2:=false;
+	#QdwState.%X3:=false;
+	#QdwState.%X4:=#QLIM_ULA_Enable;
+	#QdwState.%X5:=#QLIM_ULW_Enable;
+	#QdwState.%X6:=#QLIM_LLW_Enable;
+	#QdwState.%X7:=#QLIM_LLA_Enable;
+	#QdwState.%X9:=#QALARM_LL OR #QALARM_UL;
+	#QdwState.%X8:=NOT #QdwState.%X9 AND (#QWARN_LL OR #QWARN_UL);
+	#QdwState.%X10:=false;
+	#QdwState.%X11:=false;
+	#QdwState.%X12:=#QERR_LOWRANGE;
+	#QdwState.%X13:=#QERR_HIGHRANGE;
+	#QdwState.%X14:=#QERR_OVERRUN;
+	#QdwState.%X15:=#QERR_WIRE;
+	#QdwState.%X16:=false;
+	#QdwState.%X17:=false;
+	#QdwState.%X18:=#QSIM;
+	#QdwState.%X19:=false;
+	#QdwState.%X20:=false;
+	#QdwState.%X21:=false;
+	#QdwState.%X22:=false;
+	#QdwState.%X23:=false;
+	#QdwState.%X24:=#QERR;
+	#QdwState.%X25:=#QERR_EXT;
+	#QdwState.%X26:=#QLOCK;
+	#QdwState.%X27:=#LOCK;
+	#QdwState.%X28:=false;
+	#QdwState.%X29:=false;
+	#QdwState.%X30:=false;
+	#QdwState.%X31:=false;
+	
+	(*
+	Network 27: Bit alarm procedure
+	*)
+	#QwAlarm.%X0:=#QALARM_LL;
+	#QwAlarm.%X1:=#QALARM_UL;
+	#QwAlarm.%X2:=false;
+	#QwAlarm.%X3:=false;
+	#QwAlarm.%X4:=#QLOCK;
+	#QwAlarm.%X5:=false;
+	#QwAlarm.%X6:=#QERR_EXT;
+	#QwAlarm.%X7:=#QERR;
+	#QwAlarm.%X8:=#QWARN_LL;
+	#QwAlarm.%X9:=#QWARN_UL;
+	#QwAlarm.%X10:=false;
+	#QwAlarm.%X11:=false;
+	#QwAlarm.%X12:=#LOCK;
+	#QwAlarm.%X13:=false;
+	#QwAlarm.%X14:=false;
+	#QwAlarm.%X15:=#QSIM;
+	
+END_FUNCTION_BLOCK
+
